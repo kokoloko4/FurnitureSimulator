@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class CubeAction : MonoBehaviour
 {
-    private string path = "/Users/licho/Documents/varios/KMeansHand/KmeansHand/Data/";
+    private string path = "/Users/licho/Documents/Unity/FurnitureSimulator/DataGloves/";
     private float nextActionTime = 0.0f;
     public float period = 0.1f;
 
@@ -21,6 +21,8 @@ public class CubeAction : MonoBehaviour
     private double[][][] meansl;
     private int[] infol;
     private double[] tuplel;
+
+    public StreamWriter objWriter;
 
     // Start is called before the first frame update
     void Start()
@@ -42,14 +44,48 @@ public class CubeAction : MonoBehaviour
 
         tuple = new double[14];
         tuplel = new double[14];
+
+        objWriter = new StreamWriter(path + "/RightGlove.txt");
+        //objWriter = new StreamWriter(path+"/LeftGlove.txt");
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 0), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 1), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 2), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 3), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 4), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 5), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 6), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 7), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 8), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 9), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 10), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 11), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 12), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 13), 6) + "\n");*/
+
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 0), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 1), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 2), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 3), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 4), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 5), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 6), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 7), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 8), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 9), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 10), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 11), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 12), 6) + ",");
+        objWriter.Write(Math.Round(VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 13), 6) + "\n");
         if (Time.time > nextActionTime)
         {
             nextActionTime += period;
+
 
 
             tuplel[0] = VRPN.vrpnAnalog("Glove14Left@localhost", 0);
@@ -68,12 +104,12 @@ public class CubeAction : MonoBehaviour
             tuplel[13] = VRPN.vrpnAnalog("Glove14Left@localhost", 13);
 
             //Debug.Log(Math.Round(sen14,3));
-            meansl = GetMeansFromFile(filenamesl, 2); //TODO
-            infol = TestFingersRight(tuplel, meansl);
+            //meansl = GetMeansFromFile(filenamesl, 2); //TODO
+            //infol = TestFingersRight(tuplel, meansl);
 
             //Debug.Log(tuple[6]);
             //Debug.Log(tuple[7]);
-            Debug.Log("Glove raw left = " + String.Join(", ",
+            /*Debug.Log("Glove raw left = " + String.Join(", ",
                 new List<double>(tuplel)
                 .ConvertAll(i => i.ToString())
                 .ToArray()));
@@ -82,7 +118,7 @@ public class CubeAction : MonoBehaviour
             Debug.Log("GloveL = " + String.Join(", ",
                 new List<int>(infol)
                 .ConvertAll(i => i.ToString())
-                .ToArray()));
+                .ToArray()));*/
             
             tuple[0] = VRPN.vrpnAnalog("Glove14Right@localhost", 0);
             tuple[1] = VRPN.vrpnAnalog("Glove14Right@localhost", 1);
@@ -100,12 +136,12 @@ public class CubeAction : MonoBehaviour
             tuple[13] = VRPN.vrpnAnalog("Glove14Right@localhost", 13);
 
             //Debug.Log(Math.Round(sen14,3));
-            means = GetMeansFromFile(filenames, 2); //TODO
-            info = TestFingersLeft(tuple, means); //TODO
+            //means = GetMeansFromFile(filenames, 2); //TODO
+            //info = TestFingersLeft(tuple, means); //TODO
 
             //Debug.Log(tuple[6]);
             //Debug.Log(tuple[7]);
-            Debug.Log("Glove raw right= " + String.Join(", ",
+            /*Debug.Log("Glove raw right= " + String.Join(", ",
                 new List<double>(tuple)
                 .ConvertAll(i => i.ToString())
                 .ToArray()));
@@ -113,8 +149,13 @@ public class CubeAction : MonoBehaviour
             Debug.Log("GloveR = " + String.Join(", ",
                 new List<int>(info)
                 .ConvertAll(i => i.ToString())
-                .ToArray()));
+                .ToArray()));*/
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        objWriter.Close();
     }
 
     public static double[] GetFingersTupleRight(double[] tuple, int finger)
