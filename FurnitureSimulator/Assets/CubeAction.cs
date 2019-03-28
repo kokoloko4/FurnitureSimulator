@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class CubeAction : MonoBehaviour
 {
-    private string path = "/Users/licho/Documents/varios/KMeansHand/KmeansHand/Data/";
+    private string path = "/Users/licho/Documents/Unity/FurnitureSimulator/FurnitureSimulator/Assets/DataGloves/";
     private float nextActionTime = 0.0f;
     public float period = 0.1f;
 
@@ -52,20 +52,20 @@ public class CubeAction : MonoBehaviour
             nextActionTime += period;
 
 
-            tuplel[0] = VRPN.vrpnAnalog("Glove14Left@localhost", 0);
-            tuplel[1] = VRPN.vrpnAnalog("Glove14Left@localhost", 1);
-            tuplel[2] = VRPN.vrpnAnalog("Glove14Left@localhost", 2);
-            tuplel[3] = VRPN.vrpnAnalog("Glove14Left@localhost", 3);
-            tuplel[4] = VRPN.vrpnAnalog("Glove14Left@localhost", 4);
-            tuplel[5] = VRPN.vrpnAnalog("Glove14Left@localhost", 5);
-            tuplel[6] = VRPN.vrpnAnalog("Glove14Left@localhost", 6);
-            tuplel[7] = VRPN.vrpnAnalog("Glove14Left@localhost", 7);
-            tuplel[8] = VRPN.vrpnAnalog("Glove14Left@localhost", 8);
-            tuplel[9] = VRPN.vrpnAnalog("Glove14Left@localhost", 9);
-            tuplel[10] = VRPN.vrpnAnalog("Glove14Left@localhost", 10);
-            tuplel[11] = VRPN.vrpnAnalog("Glove14Left@localhost", 11);
-            tuplel[12] = VRPN.vrpnAnalog("Glove14Left@localhost", 12);
-            tuplel[13] = VRPN.vrpnAnalog("Glove14Left@localhost", 13);
+            tuplel[0] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 0);
+            tuplel[1] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 1);
+            tuplel[2] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 2);
+            tuplel[3] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 3);
+            tuplel[4] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 4);
+            tuplel[5] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 5);
+            tuplel[6] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 6);
+            tuplel[7] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 7);
+            tuplel[8] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 8);
+            tuplel[9] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 9);
+            tuplel[10] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 10);
+            tuplel[11] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 11);
+            tuplel[12] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 12);
+            tuplel[13] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 13);
 
             //Debug.Log(Math.Round(sen14,3));
             meansl = GetMeansFromFile(filenamesl, 2); //TODO
@@ -84,24 +84,24 @@ public class CubeAction : MonoBehaviour
                 .ConvertAll(i => i.ToString())
                 .ToArray()));
             
-            tuple[0] = VRPN.vrpnAnalog("Glove14Right@localhost", 0);
-            tuple[1] = VRPN.vrpnAnalog("Glove14Right@localhost", 1);
-            tuple[2] = VRPN.vrpnAnalog("Glove14Right@localhost", 2);
-            tuple[3] = VRPN.vrpnAnalog("Glove14Right@localhost", 3);
-            tuple[4] = VRPN.vrpnAnalog("Glove14Right@localhost", 4);
-            tuple[5] = VRPN.vrpnAnalog("Glove14Right@localhost", 5);
-            tuple[6] = VRPN.vrpnAnalog("Glove14Right@localhost", 6);
-            tuple[7] = VRPN.vrpnAnalog("Glove14Right@localhost", 7);
-            tuple[8] = VRPN.vrpnAnalog("Glove14Right@localhost", 8);
-            tuple[9] = VRPN.vrpnAnalog("Glove14Right@localhost", 9);
-            tuple[10] = VRPN.vrpnAnalog("Glove14Right@localhost", 10);
-            tuple[11] = VRPN.vrpnAnalog("Glove14Right@localhost", 11);
-            tuple[12] = VRPN.vrpnAnalog("Glove14Right@localhost", 12);
-            tuple[13] = VRPN.vrpnAnalog("Glove14Right@localhost", 13);
+            tuple[0] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 0);
+            tuple[1] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 1);
+            tuple[2] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 2);
+            tuple[3] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 3);
+            tuple[4] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 4);
+            tuple[5] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 5);
+            tuple[6] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 6);
+            tuple[7] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 7);
+            tuple[8] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 8);
+            tuple[9] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 9);
+            tuple[10] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 10);
+            tuple[11] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 11);
+            tuple[12] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 12);
+            tuple[13] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 13);
 
             //Debug.Log(Math.Round(sen14,3));
             means = GetMeansFromFile(filenames, 2); //TODO
-            info = TestFingersLeft(tuple, means); //TODO
+            info = TestFingersRight(tuple, means); //TODO
 
             //Debug.Log(tuple[6]);
             //Debug.Log(tuple[7]);
@@ -250,7 +250,7 @@ public class CubeAction : MonoBehaviour
                     minIndex = j;
                 }
             }
-            r[i] = TranslateSensorRight(minIndex, i);
+            r[i] = TranslateSensorLeft(minIndex, i);
         }
         return r;
     }
