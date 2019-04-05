@@ -21,7 +21,7 @@ public class TestTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        posVRPN = VRPN.vrpnTrackerPos("Tracker0@10.3.136.131", 2);
+        posVRPN = VRPN.vrpnTrackerPos("Tracker0@10.3.137.218", 1);
         if (Time.time > nextActionTime)
         {
             nextActionTime += period;

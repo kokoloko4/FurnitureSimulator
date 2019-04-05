@@ -8,6 +8,7 @@ TagManager:
   - active
   - not active
   - centerObject
+  - menuControl
   layers:
   - Default
   - TransparentFX

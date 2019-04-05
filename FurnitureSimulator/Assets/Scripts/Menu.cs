@@ -13,10 +13,25 @@ public class Menu : MonoBehaviour
     public Material m1;
     public float distZ;
     private GameObject[] opts;
-    private GameObject activeOpt;
+    public GameObject activeOpt;
     public float targetDistance;
     public LayerMask layerMask;
     private GameObject centerObject;
+    private double flechaV;
+    private double flechaH;
+    private bool xButton;
+    private bool yButton;
+    private bool zButton;
+    private bool aButton;
+    private bool bButton;
+    private bool cButton;
+    private bool lTrigger;
+    private bool rTrigger;
+    private float nextActionTime = 0.0f;
+    public float period = 0.1f;
+    private bool changeState = false;
+    private bool prevXButton = false;
+    private bool prevYButton = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +51,8 @@ public class Menu : MonoBehaviour
             }
             i++;
         }
+        InputDataControl("Joylin1@10.3.136.131");
+        InputControl();
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             RightOption(ref activeOpt);
@@ -61,9 +78,7 @@ public class Menu : MonoBehaviour
                 centerObject.SetActive(true);
                 if (activeOpt.GetComponent<VideoPlayer>() != null)
                 {
-                    AddVideo(ref centerObject);
-                    centerObject.GetComponent<VideoPlayer>().isLooping = false;
-                    centerObject.GetComponent<VideoPlayer>().Pause();
+                    AddVideo(ref centerObject, "video");
                 }
                 else if(activeOpt.GetComponent<VideoPlayer>() == null)
                 {
@@ -79,7 +94,8 @@ public class Menu : MonoBehaviour
         {
             centerObject.SetActive(false);
         }
-
+        prevXButton = xButton;
+        prevYButton = yButton;
     }
 
     void CreateMenu()
@@ -95,7 +111,7 @@ public class Menu : MonoBehaviour
             if (i == 0)
             {
                 cube.tag = "active";
-                cube.transform.position = new Vector3(x, y, distZ - (0.1f));
+                cube.transform.position = new Vector3(x, y, distZ - (0.4f));
             }
             else
             {
@@ -108,9 +124,9 @@ public class Menu : MonoBehaviour
             }
             else
             {
-                //AddVideo(ref cube);
-                //cube.GetComponent<VideoPlayer>().SetDirectAudioMute(0,true);
-                AddModel(ref cube);
+                AddVideo(ref cube, "video");
+                cube.GetComponent<VideoPlayer>().SetDirectAudioMute(0,true);
+                //AddModel(ref cube);
             }
             cube.transform.localScale = new Vector3(0.2f, 0.1f, 0.01f);
             cube.transform.localEulerAngles = new Vector3(0, 0, 180);
@@ -140,11 +156,11 @@ public class Menu : MonoBehaviour
         obj.transform.localEulerAngles = new Vector3(40f,0f,0f);
     }
 
-    void AddVideo (ref GameObject obj)
+    void AddVideo (ref GameObject obj, string videoName)
     {
         VideoPlayer video = obj.AddComponent<VideoPlayer>();
         AudioSource audio = obj.AddComponent<AudioSource>();
-        video.clip = Resources.Load<VideoClip>("video") as VideoClip;
+        video.clip = Resources.Load<VideoClip>(videoName) as VideoClip;
         video.isLooping = true;
         video.renderMode = VideoRenderMode.MaterialOverride;
         video.targetMaterialRenderer = GetComponent<Renderer>();
@@ -154,7 +170,7 @@ public class Menu : MonoBehaviour
         video.Play();
     }
 
-    void RightOption(ref GameObject activeOpt)
+    public void RightOption(ref GameObject activeOpt)
     {
         float x = opts[cantOpt - 1].transform.position.x;
         float y = opts[cantOpt - 1].transform.position.y;
@@ -194,5 +210,83 @@ public class Menu : MonoBehaviour
         }
         opts[cantOpt - 1].transform.position = new Vector3(x, y, z);
         activeOpt.tag = "not active";
+    }
+
+    void InputDataControl(string address)
+    {
+        if (Time.time > nextActionTime)
+        {
+            flechaV = VRPN.vrpnAnalog(address, 3);
+            flechaH = VRPN.vrpnAnalog(address, 2);
+            aButton = VRPN.vrpnButton(address, 0);
+            bButton = VRPN.vrpnButton(address, 1);
+            cButton = VRPN.vrpnButton(address, 2);
+            xButton = VRPN.vrpnButton(address, 3);
+            yButton = VRPN.vrpnButton(address, 4);
+            zButton = VRPN.vrpnButton(address, 5);
+            lTrigger = VRPN.vrpnButton(address, 6);
+            rTrigger = VRPN.vrpnButton(address, 7);
+        }
+    }
+
+    void InputControl()
+    {
+        if (Time.time > nextActionTime)
+        {
+            nextActionTime += period;
+            if (flechaH == 1)
+            {
+                RightOption(ref activeOpt);
+            }
+            else if (flechaH == -1)
+            {
+                LeftOption(ref activeOpt);
+            }
+        }
+        if (aButton && !centerObject.activeSelf)
+        {
+            centerObject.SetActive(true);
+            if (activeOpt.GetComponent<VideoPlayer>() != null)
+            {
+                AddVideo(ref centerObject, "video");
+                centerObject.GetComponent<VideoPlayer>().Pause();                
+            }
+            else if (activeOpt.GetComponent<VideoPlayer>() == null)
+            {
+                Destroy(centerObject.GetComponent<VideoPlayer>());
+                centerObject.GetComponent<Renderer>().material = activeOpt.GetComponent<Renderer>().material;
+                /*Scene sceneToLoad = SceneManager.GetSceneAt(1);
+                SceneManager.LoadScene(sceneToLoad.name);
+                SceneManager.MoveGameObjectToScene(centerObject, sceneToLoad);*/
+            }
+        }
+        if (bButton && centerObject.activeSelf)
+        {
+            centerObject.SetActive(false);
+        }
+        if (centerObject.GetComponent<VideoPlayer>() != null)
+        {
+            if (!xButton && prevXButton)
+            {               
+                if (centerObject.GetComponent<VideoPlayer>().isPlaying)
+                {
+                    centerObject.GetComponent<VideoPlayer>().Pause();
+                }
+                else
+                {
+                    centerObject.GetComponent<VideoPlayer>().Play();
+                }
+            }
+            if (!yButton && prevYButton)
+            {
+                centerObject.GetComponent<VideoPlayer>().Stop();
+                centerObject.GetComponent<VideoPlayer>().Play();
+                centerObject.GetComponent<VideoPlayer>().Pause();
+            }
+        }
+        /*if (!xButton && prevXButton)
+        {
+            changeState = !changeState;
+        }*/
     }
 }
