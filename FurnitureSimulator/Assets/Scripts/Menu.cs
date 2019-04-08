@@ -11,10 +11,12 @@ using System.Globalization;
 
 public class Menu : MonoBehaviour
 {
+    //Global Variables
+    private GameObject g;
+    //Script variables
     public int cantOpt;
     public float r;
     private GameObject menu;
-    public Material m1;
     public float distZ;
     private GameObject[] opts;
     public GameObject activeOpt;
@@ -59,6 +61,7 @@ public class Menu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        g = GameObject.Find("Global");
         menu = GameObject.FindGameObjectWithTag("menu");
         CreateMenu();
         //Data Gloves
@@ -93,13 +96,14 @@ public class Menu : MonoBehaviour
             }
             i++;
         }
-        InputDataControl("Joylin1@10.3.136.131");
+        InputKeyboardMouse();
+        /*InputDataControl("Joylin1@10.3.136.131");
         InputControl();
         InputDataTracker("Tracker0@10.3.137.218");
         InputDataGloves("Glove14Right@10.3.137.218", "Glove14Left@10.3.137.218");
 
         prevXButton = xButton;
-        prevYButton = yButton;
+        prevYButton = yButton;*/
     }
 
     void CreateMenu()
@@ -108,14 +112,14 @@ public class Menu : MonoBehaviour
         float angCubo = 90;
         for (int i = 0; i < cantOpt; i++)
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Quad);
             cube.name = i.ToString();
             float x = r * Mathf.Cos(angCubo * Mathf.Deg2Rad);
             float y = r * Mathf.Sin(angCubo * Mathf.Deg2Rad);
             if (i == 0)
             {
                 cube.tag = "active";
-                cube.transform.position = new Vector3(x, y, distZ - (0.4f));
+                cube.transform.position = new Vector3(0,0, distZ - (0.4f));
             }
             else
             {
@@ -124,7 +128,8 @@ public class Menu : MonoBehaviour
             }
             if(i%2 == 0)
             {
-                cube.GetComponent<Renderer>().material = m1;
+                Texture2D myTexture = Resources.Load("gatito") as Texture2D;
+                cube.GetComponent<Renderer>().material.mainTexture = myTexture;
             }
             else
             {
@@ -132,8 +137,7 @@ public class Menu : MonoBehaviour
                 cube.GetComponent<VideoPlayer>().SetDirectAudioMute(0,true);
                 //AddModel(ref cube);
             }
-            cube.transform.localScale = new Vector3(0.2f, 0.1f, 0.01f);
-            cube.transform.localEulerAngles = new Vector3(0, 0, 180);
+            cube.transform.localScale = new Vector3(0.3f, 0.2f, 0.01f);
             cube.transform.parent = menu.transform;
             angCubo += anguloSep;
         }
@@ -142,12 +146,6 @@ public class Menu : MonoBehaviour
         {
             opts[i] = menu.transform.GetChild(i).gameObject;
         }
-        centerObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        centerObject.tag = "centerObject";
-        centerObject.transform.position = new Vector3(0f, 0f, -9.5f);
-        centerObject.transform.parent = menu.transform;
-        centerObject.transform.localScale = new Vector3(1.2f, 0.8f, 0.0f);
-        centerObject.SetActive(false);
     }
 
     void AddModel(ref GameObject parent)
@@ -247,21 +245,17 @@ public class Menu : MonoBehaviour
                 LeftOption(ref activeOpt);
             }
         }
-        if (aButton && !centerObject.activeSelf)
+        if (aButton)
         {
-            centerObject.SetActive(true);
             if (activeOpt.GetComponent<VideoPlayer>() != null)
             {
-                AddVideo(ref centerObject, "video");
-                centerObject.GetComponent<VideoPlayer>().Pause();                
+                g.GetComponent<GlobalVars>().nameResource = "video";
+                SceneManager.LoadScene("VideoScene");
             }
             else if (activeOpt.GetComponent<VideoPlayer>() == null)
             {
-                Destroy(centerObject.GetComponent<VideoPlayer>());
-                centerObject.GetComponent<Renderer>().material = activeOpt.GetComponent<Renderer>().material;
-                /*Scene sceneToLoad = SceneManager.GetSceneAt(1);
-                SceneManager.LoadScene(sceneToLoad.name);
-                SceneManager.MoveGameObjectToScene(centerObject, sceneToLoad);*/
+                g.GetComponent<GlobalVars>().nameResource = "ColorMenu1";
+                SceneManager.LoadScene("ImageScene");
             }
         }
         if (bButton && centerObject.activeSelf)
@@ -316,26 +310,19 @@ public class Menu : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out optHit, targetDistance, layerMask))
         {
-            if (Input.GetMouseButtonDown(0) && optHit.collider.tag.Equals("active") && !centerObject.activeSelf)
+            if (Input.GetMouseButtonDown(0) && optHit.collider.tag.Equals("active"))
             {
-                centerObject.SetActive(true);
                 if (activeOpt.GetComponent<VideoPlayer>() != null)
                 {
-                    AddVideo(ref centerObject, "video");
+                    g.GetComponent<GlobalVars>().nameResource = "video";
+                    SceneManager.LoadScene("VideoScene");
                 }
                 else if (activeOpt.GetComponent<VideoPlayer>() == null)
                 {
-                    Destroy(centerObject.GetComponent<VideoPlayer>());
-                    centerObject.GetComponent<Renderer>().material = activeOpt.GetComponent<Renderer>().material;
-                    /*Scene sceneToLoad = SceneManager.GetSceneAt(1);
-                    SceneManager.LoadScene(sceneToLoad.name);
-                    SceneManager.MoveGameObjectToScene(centerObject, sceneToLoad);*/
+                    g.GetComponent<GlobalVars>().nameResource = "ColorMenu1";
+                    SceneManager.LoadScene("ImageScene");
                 }
             }
-        }
-        if (Input.GetMouseButtonDown(1) && centerObject.activeSelf)
-        {
-            centerObject.SetActive(false);
         }
     }
 
