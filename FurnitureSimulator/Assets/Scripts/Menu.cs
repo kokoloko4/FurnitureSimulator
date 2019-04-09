@@ -13,7 +13,7 @@ public class Menu : MonoBehaviour
 {
     //Global Variables
     private GameObject g;
-    //Script variables
+    //Menu
     public int cantOpt;
     public float r;
     private GameObject menu;
@@ -23,21 +23,15 @@ public class Menu : MonoBehaviour
     public float targetDistance;
     public LayerMask layerMask;
     private GameObject centerObject;
+    //Joystick variables
     private double flechaV;
     private double flechaH;
-    private bool xButton;
-    private bool yButton;
-    private bool zButton;
     private bool aButton;
-    private bool bButton;
-    private bool cButton;
-    private bool lTrigger;
-    private bool rTrigger;
-    private float nextActionTime = 0.0f;
-    public float period = 0.1f;
     private bool changeState = false;
     private bool prevXButton = false;
-    private bool prevYButton = false;
+    //Time
+    private float nextActionTime = 0.0f;
+    public float period = 0.1f;
     //Tracker
     private Vector3 posVRPN;
     private float x;
@@ -96,10 +90,9 @@ public class Menu : MonoBehaviour
             }
             i++;
         }
-        InputKeyboardMouse();
-        /*InputDataControl("Joylin1@10.3.136.131");
+        InputDataControl("Joylin1@10.3.136.131");
         InputControl();
-        InputDataTracker("Tracker0@10.3.137.218");
+        /*InputDataTracker("Tracker0@10.3.137.218");
         InputDataGloves("Glove14Right@10.3.137.218", "Glove14Left@10.3.137.218");
 
         prevXButton = xButton;
@@ -126,16 +119,19 @@ public class Menu : MonoBehaviour
                 cube.tag = "not active";
                 cube.transform.position = new Vector3(x, y, distZ);
             }
-            if(i%2 == 0)
+            if(i%3 == 0)
             {
                 Texture2D myTexture = Resources.Load("gatito") as Texture2D;
                 cube.GetComponent<Renderer>().material.mainTexture = myTexture;
             }
-            else
+            else if(i%3 == 1)
             {
                 AddVideo(ref cube, "video");
                 cube.GetComponent<VideoPlayer>().SetDirectAudioMute(0,true);
-                //AddModel(ref cube);
+            }
+            else
+            {
+                AddModel(ref cube);
             }
             cube.transform.localScale = new Vector3(0.3f, 0.2f, 0.01f);
             cube.transform.parent = menu.transform;
@@ -154,8 +150,8 @@ public class Menu : MonoBehaviour
         GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         obj.GetComponent<Renderer>().material.color = UnityEngine.Random.ColorHSV();
         obj.transform.parent = parent.transform;
-        obj.transform.localScale = new Vector3(parent.transform.localScale.x, parent.transform.localScale.y, parent.transform.localScale.z);
-        obj.transform.localEulerAngles = new Vector3(40f,0f,0f);
+        obj.transform.localScale = new Vector3(parent.transform.localScale.x - 0.5f, parent.transform.localScale.y - 0.5f , parent.transform.localScale.z);
+        obj.transform.localEulerAngles = new Vector3(40f, 0f, 0f);
     }
 
     void AddVideo (ref GameObject obj, string videoName)
@@ -221,13 +217,6 @@ public class Menu : MonoBehaviour
             flechaV = VRPN.vrpnAnalog(address, 3);
             flechaH = VRPN.vrpnAnalog(address, 2);
             aButton = VRPN.vrpnButton(address, 0);
-            bButton = VRPN.vrpnButton(address, 1);
-            cButton = VRPN.vrpnButton(address, 2);
-            xButton = VRPN.vrpnButton(address, 3);
-            yButton = VRPN.vrpnButton(address, 4);
-            zButton = VRPN.vrpnButton(address, 5);
-            lTrigger = VRPN.vrpnButton(address, 6);
-            rTrigger = VRPN.vrpnButton(address, 7);
         }
     }
 
@@ -247,7 +236,10 @@ public class Menu : MonoBehaviour
         }
         if (aButton)
         {
-            if (activeOpt.GetComponent<VideoPlayer>() != null)
+            if (activeOpt.transform.childCount > 0)
+            {
+                SceneManager.LoadScene("ModelScene");
+            }else if (activeOpt.GetComponent<VideoPlayer>() != null)
             {
                 g.GetComponent<GlobalVars>().nameResource = "video";
                 SceneManager.LoadScene("VideoScene");
@@ -256,73 +248,7 @@ public class Menu : MonoBehaviour
             {
                 g.GetComponent<GlobalVars>().nameResource = "ColorMenu1";
                 SceneManager.LoadScene("ImageScene");
-            }
-        }
-        if (bButton && centerObject.activeSelf)
-        {
-            centerObject.SetActive(false);
-        }
-        if (centerObject.GetComponent<VideoPlayer>() != null)
-        {
-            if (!xButton && prevXButton)
-            {               
-                if (centerObject.GetComponent<VideoPlayer>().isPlaying)
-                {
-                    centerObject.GetComponent<VideoPlayer>().Pause();
-                }
-                else
-                {
-                    centerObject.GetComponent<VideoPlayer>().Play();
-                }
-            }
-            if (!yButton && prevYButton)
-            {
-                centerObject.GetComponent<VideoPlayer>().Stop();
-                centerObject.GetComponent<VideoPlayer>().Play();
-                centerObject.GetComponent<VideoPlayer>().Pause();
-            }
-        }
-        /*if (!xButton && prevXButton)
-        {
-            changeState = !changeState;
-        }*/
-    }
-
-    void InputKeyboardMouse()
-    {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            RightOption(ref activeOpt);
-        }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            LeftOption(ref activeOpt);
-        }
-        if (Input.GetKeyDown(KeyCode.Escape) && menu.activeSelf == false)
-        {
-            menu.SetActive(true);
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape) && menu.activeSelf == true)
-        {
-            menu.SetActive(false);
-        }
-        RaycastHit optHit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out optHit, targetDistance, layerMask))
-        {
-            if (Input.GetMouseButtonDown(0) && optHit.collider.tag.Equals("active"))
-            {
-                if (activeOpt.GetComponent<VideoPlayer>() != null)
-                {
-                    g.GetComponent<GlobalVars>().nameResource = "video";
-                    SceneManager.LoadScene("VideoScene");
-                }
-                else if (activeOpt.GetComponent<VideoPlayer>() == null)
-                {
-                    g.GetComponent<GlobalVars>().nameResource = "ColorMenu1";
-                    SceneManager.LoadScene("ImageScene");
-                }
-            }
+            } 
         }
     }
 

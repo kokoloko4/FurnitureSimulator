@@ -8,6 +8,15 @@ public class PlayVideo : MonoBehaviour
 {
     private GameObject g;
     private GameObject objVideo;
+    //Control
+    private bool xButton;
+    private bool yButton;
+    private bool bButton;
+    private bool prevXButton = false;
+    private bool prevYButton = false;
+    //Time
+    private float nextActionTime = 0.0f;
+    public float period = 0.1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +32,10 @@ public class PlayVideo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ReturnMainMenu();
+        InputDataControl("Joylin1@10.3.136.131");
+        InputControl();
+        prevXButton = xButton;
+        prevYButton = yButton;
     }
 
     void AddVideo(ref GameObject obj, string videoName)
@@ -40,11 +52,39 @@ public class PlayVideo : MonoBehaviour
         video.Play();
     }
 
-    void ReturnMainMenu()
+
+    void InputDataControl(string address)
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Time.time > nextActionTime)
+        {
+            bButton = VRPN.vrpnButton(address, 1);
+            yButton = VRPN.vrpnButton(address, 4);
+            xButton = VRPN.vrpnButton(address, 3);
+        }
+    }
+
+    void InputControl()
+    {
+        if (bButton)
         {
             SceneManager.LoadScene("SampleScene");
+        }
+        if (!xButton && prevXButton)
+        {
+            if (objVideo.GetComponent<VideoPlayer>().isPlaying)
+            {
+                objVideo.GetComponent<VideoPlayer>().Pause();
+            }
+            else
+            {
+                objVideo.GetComponent<VideoPlayer>().Play();
+            }
+        }
+        if (!yButton && prevYButton)
+        {
+            objVideo.GetComponent<VideoPlayer>().Stop();
+            objVideo.GetComponent<VideoPlayer>().Play();
+            objVideo.GetComponent<VideoPlayer>().Pause();
         }
     }
 }
