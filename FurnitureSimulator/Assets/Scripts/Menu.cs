@@ -11,7 +11,6 @@ using System.Globalization;
 
 public class Menu : MonoBehaviour
 {
-    //Test
     //Global Variables
     private GameObject g;
     //Menu
