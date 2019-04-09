@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Linq;
 
 public class Menu : MonoBehaviour
 {
@@ -32,12 +33,25 @@ public class Menu : MonoBehaviour
     //Time
     private float nextActionTime = 0.0f;
     public float period = 0.1f;
+    private float nextActionTimeHalf = 0.0f;
+    public float periodHalf = 0.05f;
     //Tracker
     private Vector3 posVRPN;
     private float x;
     private float y;
     private float z;
-    private Vector3 vActual;
+    private Queue<Vector3> bufferTracker;
+    private int tamBuffer = 20;
+    //Z Movement
+    private float minArmDistanceZ = 1.5f;
+    private float maxArmDistanceZ = 1.9f;
+    private bool moveArmZ = false;
+    private int dirArmZ = 0;
+    //Y Movement
+    private float minArmDistanceY = 6.0f;
+    private float maxArmDistanceY = 7.0f;
+    private bool moveArmY = false;
+    private int dirArmY = 0;
     //Gloves
     private string path = "C:\\Users\\Takina\\Documents\\GitHub\\FurnitureSimulator\\FurnitureSimulator\\Assets\\DataGloves\\";
     //    "/Users/licho/Documents/Unity/FurnitureSimulator/FurnitureSimulator/Assets/DataGloves/";
@@ -60,13 +74,13 @@ public class Menu : MonoBehaviour
         CreateMenu();
         //Data Gloves
         filenames = new string[5];
-        //TODO
+        //Right gloves
         filenames[0] = path + "finger13.txt";
         filenames[1] = path + "finger23.txt";
         filenames[2] = path + "finger33.txt";
         filenames[3] = path + "finger43.txt";
         filenames[4] = path + "finger53.txt";
-
+        //Left gloves
         filenamesl = new string[5];
         filenamesl[0] = path + "finger13l.txt";
         filenamesl[1] = path + "finger23l.txt";
@@ -76,6 +90,9 @@ public class Menu : MonoBehaviour
 
         tuple = new double[14];
         tuplel = new double[14];
+
+        //Tracker
+        bufferTracker = new Queue<Vector3>();
     }
 
     // Update is called once per frame
@@ -92,11 +109,13 @@ public class Menu : MonoBehaviour
         }
         InputDataControl("Joylin1@10.3.136.131");
         InputControl();
-        /*InputDataTracker("Tracker0@10.3.137.218");
-        InputDataGloves("Glove14Right@10.3.137.218", "Glove14Left@10.3.137.218");
-
-        prevXButton = xButton;
-        prevYButton = yButton;*/
+        if (Time.time > nextActionTimeHalf)
+        {
+            nextActionTimeHalf += periodHalf;
+            InputDataTracker("Tracker0@10.3.137.218");
+            InputDataGloves("Glove14Right@10.3.137.218", "Glove14Left@10.3.137.218");
+            InputTrackerGloves();
+        }
     }
 
     void CreateMenu()
@@ -236,35 +255,23 @@ public class Menu : MonoBehaviour
         }
         if (aButton)
         {
-            if (activeOpt.transform.childCount > 0)
-            {
-                SceneManager.LoadScene("ModelScene");
-            }else if (activeOpt.GetComponent<VideoPlayer>() != null)
-            {
-                g.GetComponent<GlobalVars>().nameResource = "video";
-                SceneManager.LoadScene("VideoScene");
-            }
-            else if (activeOpt.GetComponent<VideoPlayer>() == null)
-            {
-                g.GetComponent<GlobalVars>().nameResource = "ColorMenu1";
-                SceneManager.LoadScene("ImageScene");
-            } 
+            EnterOption();
         }
     }
 
     void InputDataTracker(string address)
     {
         posVRPN = VRPN.vrpnTrackerPos(address, 1);
-        /*if (Time.time > nextActionTime)
-        {
-            nextActionTime += period;
-            Debug.Log(posVRPN);
-        }*/
+        
         x = -posVRPN.y * 10 / 0.5f;
-        y = -posVRPN.z * 10 / 0.5f;
+        y = posVRPN.z * 10 / 0.5f;
         z = -posVRPN.x * 10;
-
-        vActual = new Vector3(x, y, z);
+        Vector3 qVector = new Vector3(x, y, z);
+        bufferTracker.Enqueue(qVector);
+        if (bufferTracker.Count > tamBuffer)
+        {
+            bufferTracker.Dequeue();
+        }
     }
 
     void InputDataGloves(string addressRight, string addressLeft)
@@ -333,7 +340,109 @@ public class Menu : MonoBehaviour
 
     void InputTrackerGloves()
     {
+        Debug.Log("tbuffer" + bufferTracker.ElementAt(tamBuffer-1));
 
+        ZMovement();
+        YMovement();
+
+    }
+
+    void ZMovement()
+    {
+        dirArmZ = 0;
+        moveArmZ = false;
+        int i = 1;
+        if (bufferTracker.Count >= 20)
+        {
+            while (!moveArmZ && i < tamBuffer - 1)
+            {
+                float dif = Math.Abs(bufferTracker.ElementAt(tamBuffer - 1).z - bufferTracker.ElementAt(tamBuffer - i - 1).z);
+                if (dif >= minArmDistanceZ && dif <= maxArmDistanceZ)
+                {
+                    moveArmZ = true;
+                    if (bufferTracker.ElementAt(tamBuffer - 1).z > bufferTracker.ElementAt(tamBuffer - i - 1).z)
+                    {
+                        dirArmZ = -1;
+                    }
+                    else
+                    {
+                        dirArmZ = 1;
+                    }
+                }
+                i++;
+            }
+            //Move menu
+            if (moveArmZ)
+            {
+                //Right move
+                if (dirArmZ == 1)
+                {
+                    RightOption(ref activeOpt);
+                }
+                //Left move
+                else if (dirArmZ == -1)
+                {
+                    LeftOption(ref activeOpt);
+                }
+                bufferTracker.Clear();
+            }
+            //Debug.Log("¿hay movimiento? "+move);
+        }
+    }
+
+    void YMovement()
+    {
+        dirArmY = 0;
+        moveArmY = false;
+        int i = 1;
+        if (bufferTracker.Count >= 20)
+        {
+            while (!moveArmY && i < tamBuffer - 1)
+            {
+                float dif = Math.Abs(bufferTracker.ElementAt(tamBuffer - 1).y - bufferTracker.ElementAt(tamBuffer - i - 1).y);
+                if (dif >= minArmDistanceY && dif <= maxArmDistanceY)
+                {
+                    moveArmY = true;
+                    if (bufferTracker.ElementAt(tamBuffer - 1).y > bufferTracker.ElementAt(tamBuffer - i - 1).y)
+                    {
+                        dirArmY = 1;
+                    }
+                    else
+                    {
+                        dirArmY = -1;
+                    }
+                }
+                i++;
+            }
+            //Enter option
+            if (moveArmY)
+            {
+                if (dirArmY == 1)
+                {
+                    EnterOption();
+                }
+                bufferTracker.Clear();
+            }
+            //Debug.Log("¿hay movimiento? "+ moveArmY);
+        }
+    }
+
+    public void EnterOption()
+    {
+        if (activeOpt.transform.childCount > 0)
+        {
+            SceneManager.LoadScene("ModelScene");
+        }
+        else if (activeOpt.GetComponent<VideoPlayer>() != null)
+        {
+            g.GetComponent<GlobalVars>().nameResource = "video";
+            SceneManager.LoadScene("VideoScene");
+        }
+        else if (activeOpt.GetComponent<VideoPlayer>() == null)
+        {
+            g.GetComponent<GlobalVars>().nameResource = "ColorMenu1";
+            SceneManager.LoadScene("ImageScene");
+        }
     }
 
     public static double[] GetFingersTuple(double[] tuple, int finger)
