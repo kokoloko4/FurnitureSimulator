@@ -866,6 +866,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   period: 0.1
+  animationOpenMiddle: {fileID: 0}
+  clipOpenMiddle: {fileID: 7400000, guid: 4915aea288124cc428569a5c2294c94c, type: 2}
 --- !u!1001 &1377065608
 PrefabInstance:
   m_ObjectHideFlags: 0

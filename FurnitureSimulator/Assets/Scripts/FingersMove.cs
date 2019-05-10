@@ -23,7 +23,12 @@ public class FingersMove : MonoBehaviour
     private double[][][] meansl;
     private int[] infol;
     private double[] tuplel;
-
+    //States
+    private int[] infolAnt = new int[5];
+    private int[] infoAnt = new int[5];
+    //Animations
+    private Animation animationOpenMiddle;
+    public AnimationClip clipOpenMiddle;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +50,8 @@ public class FingersMove : MonoBehaviour
 
         tuple = new double[14];
         tuplel = new double[14];
+        animationOpenMiddle = GetComponent<Animation>();
+        animationOpenMiddle.AddClip(clipOpenMiddle, "openMid");
     }
 
     // Update is called once per frame
@@ -52,62 +59,67 @@ public class FingersMove : MonoBehaviour
     {
         if (Time.time > nextActionTime)
         {
+            GetFingersData("Glove14Left@10.3.136.131", "Glove14Right@10.3.136.131");
+        }
+    }
+
+    private void GetFingersData(string nameLeft, string nameRight)
+    {
+        //Left Glove
+        tuplel[0] = VRPN.vrpnAnalog(nameLeft, 0);
+        tuplel[1] = VRPN.vrpnAnalog(nameLeft, 1);
+        tuplel[2] = VRPN.vrpnAnalog(nameLeft, 2);
+        tuplel[3] = VRPN.vrpnAnalog(nameLeft, 3);
+        tuplel[4] = VRPN.vrpnAnalog(nameLeft, 4);
+        tuplel[5] = VRPN.vrpnAnalog(nameLeft, 5);
+        tuplel[6] = VRPN.vrpnAnalog(nameLeft, 6);
+        tuplel[7] = VRPN.vrpnAnalog(nameLeft, 7);
+        tuplel[8] = VRPN.vrpnAnalog(nameLeft, 8);
+        tuplel[9] = VRPN.vrpnAnalog(nameLeft, 9);
+        tuplel[10] = VRPN.vrpnAnalog(nameLeft, 10);
+        tuplel[11] = VRPN.vrpnAnalog(nameLeft, 11);
+        tuplel[12] = VRPN.vrpnAnalog(nameLeft, 12);
+        tuplel[13] = VRPN.vrpnAnalog(nameLeft, 13);
+        meansl = GetMeansFromFile(filenamesl, 2); //TODO
+        infol = TestFingersRight(tuplel, meansl);
+        //Right Glove
+        tuple[0] = VRPN.vrpnAnalog(nameRight, 0);
+        tuple[1] = VRPN.vrpnAnalog(nameRight, 1);
+        tuple[2] = VRPN.vrpnAnalog(nameRight, 2);
+        tuple[3] = VRPN.vrpnAnalog(nameRight, 3);
+        tuple[4] = VRPN.vrpnAnalog(nameRight, 4);
+        tuple[5] = VRPN.vrpnAnalog(nameRight, 5);
+        tuple[6] = VRPN.vrpnAnalog(nameRight, 6);
+        tuple[7] = VRPN.vrpnAnalog(nameRight, 7);
+        tuple[8] = VRPN.vrpnAnalog(nameRight, 8);
+        tuple[9] = VRPN.vrpnAnalog(nameRight, 9);
+        tuple[10] = VRPN.vrpnAnalog(nameRight, 10);
+        tuple[11] = VRPN.vrpnAnalog(nameRight, 11);
+        tuple[12] = VRPN.vrpnAnalog(nameRight, 12);
+        tuple[13] = VRPN.vrpnAnalog(nameRight, 13);
+        means = GetMeansFromFile(filenames, 2); //TODO
+        info = TestFingersRight(tuple, means); //TODO
+
+        //Old data
+        if (info != null && infol != null)
+        {
+            infoAnt = info;
+            infolAnt = infol;
+        }
+
+        /*
+                if (Time.time > nextActionTime)
+        {
             nextActionTime += period;
-
-
-            tuplel[0] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 0);
-            tuplel[1] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 1);
-            tuplel[2] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 2);
-            tuplel[3] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 3);
-            tuplel[4] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 4);
-            tuplel[5] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 5);
-            tuplel[6] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 6);
-            tuplel[7] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 7);
-            tuplel[8] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 8);
-            tuplel[9] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 9);
-            tuplel[10] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 10);
-            tuplel[11] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 11);
-            tuplel[12] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 12);
-            tuplel[13] = VRPN.vrpnAnalog("Glove14Left@10.3.136.131", 13);
-
-            //Debug.Log(Math.Round(sen14,3));
-            meansl = GetMeansFromFile(filenamesl, 2); //TODO
-            infol = TestFingersRight(tuplel, meansl);
-
-            //Debug.Log(tuple[6]);
-            //Debug.Log(tuple[7]);
             Debug.Log("Glove raw left = " + String.Join(", ",
                 new List<double>(tuplel)
                 .ConvertAll(i => i.ToString())
                 .ToArray()));
 
-
             Debug.Log("GloveL = " + String.Join(", ",
                 new List<int>(infol)
                 .ConvertAll(i => i.ToString())
                 .ToArray()));
-
-            tuple[0] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 0);
-            tuple[1] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 1);
-            tuple[2] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 2);
-            tuple[3] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 3);
-            tuple[4] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 4);
-            tuple[5] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 5);
-            tuple[6] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 6);
-            tuple[7] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 7);
-            tuple[8] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 8);
-            tuple[9] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 9);
-            tuple[10] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 10);
-            tuple[11] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 11);
-            tuple[12] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 12);
-            tuple[13] = VRPN.vrpnAnalog("Glove14Right@10.3.136.131", 13);
-
-            //Debug.Log(Math.Round(sen14,3));
-            means = GetMeansFromFile(filenames, 2); //TODO
-            info = TestFingersRight(tuple, means); //TODO
-
-            //Debug.Log(tuple[6]);
-            //Debug.Log(tuple[7]);
             Debug.Log("Glove raw right= " + String.Join(", ",
                 new List<double>(tuple)
                 .ConvertAll(i => i.ToString())
@@ -118,9 +130,9 @@ public class FingersMove : MonoBehaviour
                 .ConvertAll(i => i.ToString())
                 .ToArray()));
         }
+         */
+
     }
-
-
 
     public static double[] GetFingersTupleRight(double[] tuple, int finger)
     {
