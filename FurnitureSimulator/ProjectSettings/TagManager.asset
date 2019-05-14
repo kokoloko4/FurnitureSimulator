@@ -6,6 +6,9 @@ TagManager:
   tags:
   - lefthand
   - righthand
+  - menu
+  - active
+  - not active
   layers:
   - Default
   - TransparentFX
