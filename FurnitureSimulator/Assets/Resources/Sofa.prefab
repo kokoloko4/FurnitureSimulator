@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 9577518}
   - component: {fileID: -8122312799527861346}
   - component: {fileID: -1769999803468026339}
+  - component: {fileID: -4086765034947353069}
   m_Layer: 0
   m_Name: Sofa
   m_TagString: Untagged
@@ -30,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 179898}
   m_LocalRotation: {x: 0.000000030908623, y: 0.7071068, z: 0.7071068, w: -0.000000030908623}
   m_LocalPosition: {x: 2.54, y: 0.26, z: 0.594}
-  m_LocalScale: {x: 3, y: 3, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -128,3 +129,15 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.0106244, y: 0.8867383, z: 0.7066387}
   m_Center: {x: 0.4424775, y: 0.10192678, z: 0.05850605}
+--- !u!114 &-4086765034947353069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aac6dbdc4a30584baf488da794986c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

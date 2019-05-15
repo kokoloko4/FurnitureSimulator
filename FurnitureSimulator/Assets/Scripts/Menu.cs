@@ -48,7 +48,13 @@ public class Menu : MonoBehaviour
     void Update()
     {
         MainMenu();
-        InputControl();
+        /*InputControl();
+        if (Time.time > nextActionTimeHalf)
+        {
+            nextActionTimeHalf += periodHalf;
+            InputDataTracker("Tracker0@10.3.136.131");
+            InputTrackerGloves();
+        }*/
     }
 
     void MainMenu()
@@ -73,13 +79,7 @@ public class Menu : MonoBehaviour
                 activeOpt = opts[i];
             }
             i++;
-        }
-        if (Time.time > nextActionTimeHalf)
-        {
-            nextActionTimeHalf += periodHalf;
-            InputDataTracker("Tracker0@10.3.136.131");
-            InputTrackerGloves();
-        }
+        }        
     }
 
     void DestroyMenu()
