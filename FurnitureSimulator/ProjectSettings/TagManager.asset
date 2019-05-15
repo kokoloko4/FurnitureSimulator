@@ -9,6 +9,7 @@ TagManager:
   - menu
   - active
   - not active
+  - selection
   layers:
   - Default
   - TransparentFX
