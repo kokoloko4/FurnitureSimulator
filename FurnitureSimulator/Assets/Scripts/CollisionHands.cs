@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestHandsCollisions : MonoBehaviour
+public class CollisionHands : MonoBehaviour
 {
     private GameObject RightHand = null;
     private GameObject LeftHand = null;
