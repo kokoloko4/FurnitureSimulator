@@ -1020,7 +1020,8 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: fd0a93f436c49f448951ae9e0ca96864, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9500000, guid: 3d1ee01ec454bda46adb3f173f3db3f0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3d1ee01ec454bda46adb3f173f3db3f0, type: 3}
 --- !u!1001 &1486019831
 PrefabInstance:
@@ -1097,7 +1098,8 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 17f2bb0eef758a6459b43a025b026089, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9500000, guid: b65eccd5a29321540a42d2b0e5a81757, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b65eccd5a29321540a42d2b0e5a81757, type: 3}
 --- !u!1001 &1509683689
 PrefabInstance:
@@ -1201,7 +1203,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1486019831}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1545807685
+--- !u!114 &1545807686
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
