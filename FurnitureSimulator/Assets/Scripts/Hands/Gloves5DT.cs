@@ -18,7 +18,7 @@ public class Gloves5DT
     private string[] FilenamesLeft { get; set; }
     private double[][][] MeansLeft { get; set; }
     private int[] InfoLeft { get; set; }
-    private double[] TupleLeft { get; set; }
+    public double[] TupleLeft { get; set; }
     //Past InfoRight
     private int[] InfoLeftAnt { get; set; }
     private int[] InfoRightAnt { get; set; }
