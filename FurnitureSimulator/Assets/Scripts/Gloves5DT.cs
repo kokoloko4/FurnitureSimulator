@@ -2,6 +2,8 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using UnityEngine;
+using System.Collections.Generic;
 
 public class Gloves5DT
 {
@@ -11,7 +13,7 @@ public class Gloves5DT
     private string[] Filenames { get; set; }
     private double[][][] Means { get; set; }
     private int[] InfoRight { get; set; }
-    private double[] TupleRight { get; set; }
+    public double[] TupleRight { get; set; }
     //Left hand
     private string[] FilenamesLeft { get; set; }
     private double[][][] MeansLeft { get; set; }
@@ -96,6 +98,12 @@ public class Gloves5DT
         }
 
         /*
+        Debug.Log("Glove raw right= " + String.Join(", ",
+        new List<double>(TupleRight)
+        .ConvertAll(i => i.ToString())
+        .ToArray()));
+
+
         if (Time.time > nextActionTime)
         {
             nextActionTime += period;
@@ -122,13 +130,13 @@ public class Gloves5DT
 
     }
 
-    public static double[][][] GetMeansFromFile(string[] Filenames, int numK)
+    public double[][][] GetMeansFromFile(string[] Filenames, int numK)
     {
-        double[][][] Means = new double[5][][];
+        double[][][] means = new double[5][][];
 
         for (int i = 0; i < Filenames.Length; i++)
         {
-            Means[i] = new double[numK][];
+            means[i] = new double[numK][];
             string filename = Filenames[i];
             String line; try
             {
@@ -144,12 +152,12 @@ public class Gloves5DT
                     {
                         tam++;
                     }
-                    Means[i][j] = new double[tam];
+                    means[i][j] = new double[tam];
 
                     int k = 0;
                     foreach (Match match in reg.Matches(line))
                     {
-                        Means[i][j][k] = double.Parse(match.Value, CultureInfo.InvariantCulture.NumberFormat);
+                        means[i][j][k] = double.Parse(match.Value, CultureInfo.InvariantCulture.NumberFormat);
                         k++;
                     }
 
@@ -168,34 +176,34 @@ public class Gloves5DT
             }
         }
 
-        return Means;
+        return means;
     }
 
-    private static double[] GetFingersTupleRight(double[] TupleRight, int finger)
+    public double[] GetFingersTuple(double[] tuple, int finger)
     {
         double[] r = new double[2];
         finger++;
         switch (finger)
         {
             case 1:
-                r[0] = TupleRight[0];
-                r[1] = TupleRight[1];
+                r[0] = tuple[0];
+                r[1] = tuple[1];
                 break;
             case 2:
-                r[0] = TupleRight[3];
-                r[1] = TupleRight[4];
+                r[0] = tuple[3];
+                r[1] = tuple[4];
                 break;
             case 3:
-                r[0] = TupleRight[6];
-                r[1] = TupleRight[7];
+                r[0] = tuple[6];
+                r[1] = tuple[7];
                 break;
             case 4:
-                r[0] = TupleRight[9];
-                r[1] = TupleRight[10];
+                r[0] = tuple[9];
+                r[1] = tuple[10];
                 break;
             case 5:
-                r[0] = TupleRight[12];
-                r[1] = TupleRight[13];
+                r[0] = tuple[12];
+                r[1] = tuple[13];
                 break;
             default:
                 r[0] = -1;
@@ -205,7 +213,7 @@ public class Gloves5DT
         return r;
     }
 
-    private static int[] TestFingers(double[] TupleRight, double[][][] Means)
+    private int[] TestFingers(double[] tuple, double[][][] means)
     {
 
         int[] r = new int[5];
@@ -213,10 +221,10 @@ public class Gloves5DT
         for (int i = 0; i < 5; i++) //num dedos
         {
             int minIndex = 0;
-            double min = Distance(GetFingersTupleRight(TupleRight, i), Means[i][0]);
-            for (int j = 1; j < Means[i].Length; j++)
+            double min = Distance(GetFingersTuple(tuple, i), means[i][0]);
+            for (int j = 1; j < means[i].Length; j++)
             {
-                if (Distance(GetFingersTupleRight(TupleRight, i), Means[i][j]) < min)
+                if (Distance(GetFingersTuple(tuple, i), means[i][j]) < min)
                 {
                     minIndex = j;
                 }
@@ -226,7 +234,7 @@ public class Gloves5DT
         return r;
     }
 
-    private static int TranslateSensor(int num, int finger)
+    private int TranslateSensor(int num, int finger)
     {
         //Debug.Log(num);
         int r = 99;
@@ -245,11 +253,11 @@ public class Gloves5DT
         return r;
     }
 
-    private static double Distance(double[] TupleRight, double[] mean)
+    public double Distance(double[] tuple, double[] mean)
     {
         double sumSquaredDiffs = 0.0;
-        for (int j = 0; j < TupleRight.Length; ++j)
-            sumSquaredDiffs += Math.Pow((TupleRight[j] - mean[j]), 2);
+        for (int j = 0; j < tuple.Length; ++j)
+            sumSquaredDiffs += Math.Pow((tuple[j] - mean[j]), 2);
         return Math.Sqrt(sumSquaredDiffs);
 
     }

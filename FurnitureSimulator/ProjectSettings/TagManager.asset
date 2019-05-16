@@ -10,6 +10,7 @@ TagManager:
   - active
   - not active
   - selection
+  - testfinger
   layers:
   - Default
   - TransparentFX
