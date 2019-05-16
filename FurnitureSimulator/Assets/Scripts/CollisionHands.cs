@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CollisionHands : MonoBehaviour
 {
-    private GameObject RightHand = null;
-    private GameObject LeftHand = null;
+    public GameObject RightHand = null;
+    public GameObject LeftHand = null;
     // Start is called before the first frame update
     void Start()
     {
