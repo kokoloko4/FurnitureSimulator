@@ -14,9 +14,9 @@ public class Menu : MonoBehaviour
     private GameObject[] opts;
     private bool created = false;
     //Time
-    private float nextActionTime = 0.0f;
+    //private float nextActionTime = 0.0f;
     public float period = 0.1f;
-    private float nextActionTimeHalf = 0.0f;
+    //private float nextActionTimeHalf = 0.0f;
     public float periodHalf = 0.05f;
     //Tracker
     private Vector3 posVRPN;
@@ -77,12 +77,12 @@ public class Menu : MonoBehaviour
                 }
                 i++;
             }
-            if (Time.time > nextActionTimeHalf)
+            /*if (Time.time > nextActionTimeHalf)
             {
                 nextActionTimeHalf += periodHalf;
                 InputDataTracker("Tracker0@10.3.136.131");
                 InputTrackerGloves();
-            }
+            }*/
         }        
     }
 
