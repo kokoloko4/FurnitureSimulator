@@ -43,10 +43,13 @@ public class FingersMovement : MonoBehaviour
     {
         Gloves.GetFingersData("Glove14Left@10.3.136.131", "Glove14Right@10.3.136.131");
         if (transform.tag == "righthand")
+        {
             RotateRightFingers();
-        else
+        }
+        else if(transform.tag == "lefthand")
+        {
             RotateLeftFingers();
-
+        }
     }
 
     private void InitializeFingersRight()
@@ -132,7 +135,7 @@ public class FingersMovement : MonoBehaviour
         RotateFinger(Ring, RingRaw, RingOpen, 0, -90, 0.00936f, 0.0865f);
         //Pinky
         PinkyRaw = Gloves.GetFingersTuple(Gloves.TupleLeft, 4);
-        RotateFinger(Pinky, PinkyRaw, PinkyOpen, 0, -70, 0.00251f, 0.1994f);
+        RotateFinger(Pinky, PinkyRaw, PinkyOpen, 0, 355, 0.01f, 0.2923f);
     }
 
     private float CalculateDegrees(float minAngle, float maxAngle, float minDistance, float maxDistance, float varDistance)

@@ -12,12 +12,12 @@ public class Gloves5DT
     //Right hand
     private string[] Filenames { get; set; }
     private double[][][] Means { get; set; }
-    private int[] InfoRight { get; set; }
+    public int[] InfoRight { get; set; }
     public double[] TupleRight { get; set; }
     //Left hand
     private string[] FilenamesLeft { get; set; }
     private double[][][] MeansLeft { get; set; }
-    private int[] InfoLeft { get; set; }
+    public int[] InfoLeft { get; set; }
     public double[] TupleLeft { get; set; }
     //Past InfoRight
     private int[] InfoLeftAnt { get; set; }

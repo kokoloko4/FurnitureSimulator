@@ -35,13 +35,15 @@ public class Menu : MonoBehaviour
     private float maxArmDistanceY = 7.0f;
     private bool moveArmY = false;
     private int dirArmY = 0;
+    //Gloves
+    public GameObject RightHand;
+    public GameObject LeftHand;
     // Start is called before the first frame update
     void Start()
     {
         menu = GameObject.FindGameObjectWithTag("menu");
         menu.transform.localPosition = new Vector3(0,0,2.5f);
         bufferTracker = new Queue<Vector3>();
-
     }
 
     // Update is called once per frame
@@ -220,7 +222,7 @@ public class Menu : MonoBehaviour
                         furniture = Resources.Load<GameObject>("BookCase_1") as GameObject;
                         break;
                 }
-                Instantiate(furniture, new Vector3(5, 2, 4), transform.rotation * Quaternion.Euler(270f, 0f, 0f));
+                Instantiate(furniture, new Vector3(RightHand.transform.position.x, RightHand.transform.position.y - 0.5f, RightHand.transform.position.z +0.5f), transform.rotation * Quaternion.Euler(270f, 0f, 0f));
                 menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
                 Destroy(GameObject.FindGameObjectWithTag("selection"));
                 DestroyMenu();
