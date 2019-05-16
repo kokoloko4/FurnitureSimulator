@@ -31,7 +31,7 @@ public class FingersMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Gloves = new Gloves5DT("/Users/takina/Documents/Unity/FurnitureSimulator/FurnitureSimulator/Assets/DataGloves/");
+        Gloves = new Gloves5DT(Application.dataPath + "/DataGloves/");
         if (transform.tag == "righthand")
             InitializeFingersRight();
         else
@@ -104,7 +104,7 @@ public class FingersMovement : MonoBehaviour
         RotateFinger(Thumb, ThumbRaw, ThumbOpen, 0, -40, 0.0673f, 0.50f);
         //Index
         IndexRaw = Gloves.GetFingersTuple(Gloves.TupleRight, 1);
-        RotateFinger(Index, IndexRaw, IndexOpen, 0, -20, 0.001078f, 0.006467f);
+        RotateFinger(Index, IndexRaw, IndexOpen, 0, -40, 0.001078f, 0.006467f);
         //Middle
         MiddleRaw = Gloves.GetFingersTuple(Gloves.TupleRight, 2);
         RotateFinger(Middle, MiddleRaw, MiddleOpen, 0, -70, 0.03014f, 0.1356f);
