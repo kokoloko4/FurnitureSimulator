@@ -53,6 +53,51 @@ public class Gloves5DT
         InfoRightAnt = new int[5];
     }
 
+    public int OpenFingers(int[] info)
+    {
+        int num = 0;
+        for(int i = 0; i < info.Length; i++)
+        {
+            if (info[i] == 1)
+                num++;
+        }
+        return num;
+    }
+
+    public int CloseFingers(int[] info)
+    {
+        int num = 0;
+        for (int i = 0; i < info.Length; i++)
+        {
+            if (info[i] == 0)
+                num++;
+        }
+        return num;
+    }
+
+    public void TestInfo()
+    {
+        Debug.Log("Glove raw right= " + String.Join(", ",
+        new List<double>(TupleRight)
+            .ConvertAll(i => i.ToString())
+            .ToArray()));
+
+        Debug.Log("Glove raw left = " + String.Join(", ",
+            new List<double>(TupleLeft)
+            .ConvertAll(i => i.ToString())
+            .ToArray()));
+
+        Debug.Log("GloveL = " + String.Join(", ",
+            new List<int>(InfoLeft)
+            .ConvertAll(i => i.ToString())
+            .ToArray()));
+
+        Debug.Log("GloveR = " + String.Join(", ",
+            new List<int>(InfoRight)
+            .ConvertAll(i => i.ToString())
+            .ToArray()));
+    }
+
     public void GetFingersData(string nameLeft, string nameRight)
     {
         //Left Glove
@@ -96,38 +141,6 @@ public class Gloves5DT
             InfoRightAnt = InfoRight;
             InfoLeftAnt = InfoLeft;
         }
-
-        /*
-        Debug.Log("Glove raw right= " + String.Join(", ",
-        new List<double>(TupleRight)
-        .ConvertAll(i => i.ToString())
-        .ToArray()));
-
-
-        if (Time.time > nextActionTime)
-        {
-            nextActionTime += period;
-            Debug.Log("Glove raw left = " + String.Join(", ",
-                new List<double>(TupleLeft)
-                .ConvertAll(i => i.ToString())
-                .ToArray()));
-
-            Debug.Log("GloveL = " + String.Join(", ",
-                new List<int>(InfoLeft)
-                .ConvertAll(i => i.ToString())
-                .ToArray()));
-            Debug.Log("Glove raw right= " + String.Join(", ",
-                new List<double>(TupleRight)
-                .ConvertAll(i => i.ToString())
-                .ToArray()));
-
-            Debug.Log("GloveR = " + String.Join(", ",
-                new List<int>(InfoRight)
-                .ConvertAll(i => i.ToString())
-                .ToArray()));
-        }
-         */
-
     }
 
     public double[][][] GetMeansFromFile(string[] Filenames, int numK)
