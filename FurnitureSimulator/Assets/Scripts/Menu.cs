@@ -64,22 +64,26 @@ public class Menu : MonoBehaviour
             DestroyMenu();
             Destroy(GameObject.FindGameObjectWithTag("selection"));
             menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
+            created = false;
         }
-        int i = 0;
-        while (i < opts.Length)
+        if(created == true)
         {
-            if (opts[i].tag == "active")
+            int i = 0;
+            while (i < opts.Length)
             {
-                activeOpt = opts[i];
+                if (opts[i].tag == "active")
+                {
+                    activeOpt = opts[i];
+                }
+                i++;
             }
-            i++;
-        }
-        if (Time.time > nextActionTimeHalf)
-        {
-            nextActionTimeHalf += periodHalf;
-            InputDataTracker("Tracker0@10.3.136.131");
-            InputTrackerGloves();
-        }
+            if (Time.time > nextActionTimeHalf)
+            {
+                nextActionTimeHalf += periodHalf;
+                InputDataTracker("Tracker0@10.3.136.131");
+                InputTrackerGloves();
+            }
+        }        
     }
 
     void DestroyMenu()
