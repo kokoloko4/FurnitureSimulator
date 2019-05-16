@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrackRotation : MonoBehaviour
+public class TrackerRotation : MonoBehaviour
 {
     //Tracker
     private Quaternion QuatVRPN;
