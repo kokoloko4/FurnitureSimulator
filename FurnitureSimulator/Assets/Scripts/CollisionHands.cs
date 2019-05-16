@@ -31,7 +31,7 @@ public class CollisionHands : MonoBehaviour
         }
         if ( RightHand != null && LeftHand != null && Input.GetKey(KeyCode.F))
         {
-            transform.SetParent(obj.transform.parent.transform);
+            transform.SetParent(RightHand.transform.parent.transform);
             GetComponent<Rigidbody>().useGravity = false;
             GetComponent<Rigidbody>().isKinematic = true;
         }
