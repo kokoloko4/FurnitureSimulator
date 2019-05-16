@@ -6,6 +6,7 @@ public class CollisionHands : MonoBehaviour
 {
     public GameObject RightHand = null;
     public GameObject LeftHand = null;
+    public bool isGrabbed = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +35,7 @@ public class CollisionHands : MonoBehaviour
             transform.SetParent(RightHand.transform.parent.transform);
             GetComponent<Rigidbody>().useGravity = false;
             GetComponent<Rigidbody>().isKinematic = true;
+            isGrabbed = true;
         }
     }
 
@@ -46,6 +48,7 @@ public class CollisionHands : MonoBehaviour
             GetComponent<Rigidbody>().isKinematic = false;
             RightHand = null;
             LeftHand = null;
+            isGrabbed = false;
         }
     }
 }

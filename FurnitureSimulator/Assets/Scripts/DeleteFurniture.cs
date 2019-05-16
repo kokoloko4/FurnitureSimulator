@@ -17,7 +17,7 @@ public class DeleteFurniture : MonoBehaviour
     {
         RightHand = GetComponent<CollisionHands>().RightHand;
         LeftHand = GetComponent<CollisionHands>().LeftHand;
-        if(RightHand != null && LeftHand != null && Input.GetKey(KeyCode.Q))
+        if(RightHand != null && LeftHand != null && GetComponent<CollisionHands>().isGrabbed && Input.GetKey(KeyCode.Q))
         {
             Destroy(this.gameObject);
         }
