@@ -25,6 +25,7 @@ public class CollisionHands : MonoBehaviour
         Debug.Log("CloseR: " + Gloves.CloseFingers(Gloves.InfoRight));
         Debug.Log("OpenL: "+Gloves.OpenFingers(Gloves.InfoLeft));
         Debug.Log("CloseL: " + Gloves.CloseFingers(Gloves.InfoLeft));*/
+        //Debug.Log("entro");
         OpenFingersRight = Gloves.OpenFingers(Gloves.InfoRight);
         OpenFingersLeft = Gloves.OpenFingers(Gloves.InfoLeft);
         ThrowFurniture();

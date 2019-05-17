@@ -42,6 +42,7 @@ public class FingersMovement : MonoBehaviour
     void Update()
     {
         Gloves.GetFingersData("Glove14Left@10.3.136.131", "Glove14Right@10.3.136.131");
+        //Gloves.TestInfo();
         if (transform.tag == "righthand")
         {
             RotateRightFingers();
@@ -57,7 +58,7 @@ public class FingersMovement : MonoBehaviour
         //Thumb
         ThumbOpen = new double[2];
         ThumbOpen[0] = 0.36;
-        ThumbOpen[1] = 0.34;
+        ThumbOpen[1] = 0.91;
         //Index
         IndexOpen = new double[2];
         IndexOpen[0] = 0.23;
@@ -104,7 +105,7 @@ public class FingersMovement : MonoBehaviour
     {
         //Thumb
         ThumbRaw = Gloves.GetFingersTuple(Gloves.TupleRight, 0);
-        RotateFinger(Thumb, ThumbRaw, ThumbOpen, 0, -40, 0.0673f, 0.50f);
+        RotateFinger(Thumb, ThumbRaw, ThumbOpen, 0, -80, 0.0821f, 0.3341f);
         //Index
         IndexRaw = Gloves.GetFingersTuple(Gloves.TupleRight, 1);
         RotateFinger(Index, IndexRaw, IndexOpen, 0, -40, 0.001078f, 0.006467f);
@@ -123,7 +124,7 @@ public class FingersMovement : MonoBehaviour
     {
         //Thumb
         ThumbRaw = Gloves.GetFingersTuple(Gloves.TupleLeft, 0);
-        RotateFinger(Thumb, ThumbRaw, ThumbOpen, 0, -60, 0.01309f, 0.1428f);
+        RotateFinger(Thumb, ThumbRaw, ThumbOpen, 0, -40, 0.01309f, 0.1428f);
         //Index
         IndexRaw = Gloves.GetFingersTuple(Gloves.TupleLeft, 1);
         RotateFinger(Index, IndexRaw, IndexOpen, 0, -80, 0.01783f, 0.2347f);
@@ -135,7 +136,7 @@ public class FingersMovement : MonoBehaviour
         RotateFinger(Ring, RingRaw, RingOpen, 0, -90, 0.00936f, 0.0865f);
         //Pinky
         PinkyRaw = Gloves.GetFingersTuple(Gloves.TupleLeft, 4);
-        RotateFinger(Pinky, PinkyRaw, PinkyOpen, 0, 355, 0.01f, 0.2923f);
+        RotateFinger(Pinky, PinkyRaw, PinkyOpen, 0, -20, 0.01f, 0.2923f);
     }
 
     private float CalculateDegrees(float minAngle, float maxAngle, float minDistance, float maxDistance, float varDistance)
