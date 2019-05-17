@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -134446440741177258}
   - component: {fileID: 3575428568038129961}
   - component: {fileID: 5600497535596086415}
+  - component: {fileID: -8982373883741952268}
   m_Layer: 0
   m_Name: Bed
   m_TagString: Untagged
@@ -110,6 +111,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37df694a88bf6b54c807820833ec5deb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-8982373883741952268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255d7563f6f6549f4a8fe7b89c0ff521, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &190264
