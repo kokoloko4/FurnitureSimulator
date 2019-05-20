@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WiimoteApi;
+
 
 public class RotateFurniture : MonoBehaviour
 {
 
     private GameObject RightHand = null;
     private GameObject LeftHand = null;
+    public Wiimote controlWii = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,36 +24,62 @@ public class RotateFurniture : MonoBehaviour
 
         RightHand = GetComponent<CollisionHands>().RightHand;
         LeftHand = GetComponent<CollisionHands>().LeftHand;
+
         if (RightHand != null && LeftHand != null && GetComponent<CollisionHands>().isGrabbed)
         {
+                    controlWii = GetComponent<CollisionHands>().controlWii;
 
-       
-                if (Input.GetKey(KeyCode.O))
+
+            if (controlWii != null)
+            {
+                int ret;
+                do
+                {
+                    ret = controlWii.ReadWiimoteData();
+
+                    if (ret > 0 && controlWii.current_ext == ExtensionController.MOTIONPLUS)
+                    {
+                        Vector3 offset = new Vector3(-controlWii.MotionPlus.PitchSpeed,
+                                                        controlWii.MotionPlus.YawSpeed,
+                                                        controlWii.MotionPlus.RollSpeed) / 95f; // Divide by 95Hz (average updates per second from wiimote)
+                                                                                                //wmpOffset += offset;
+
+                        //model.rot.Rotate(offset, Space.Self);
+                    }
+                } while (ret > 0);
+
+                NunchuckData data = controlWii.Nunchuck;
+
+                Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
+
+
+                if (data.stick[0] - 140 > 10 && data.c && !data.z)
                 {
                     transform.Rotate(0, 10, 0);
                 }
-                else if (Input.GetKey(KeyCode.L))
+                else if (data.stick[0] - 140 < -10 && data.c && !data.z)
                 {
                     transform.Rotate(0, -10, 0);
+
                 }
-                else if (Input.GetKey(KeyCode.P))
+                else if (data.stick[1] - 130 > 10 && data.c && !data.z)
                 {
-                transform.Rotate(10, 0, 0);
+                    transform.Rotate(10, 0, 0);
                 }
-                else if (Input.GetKey(KeyCode.I))
+                else if (data.stick[1] - 130 < -10 && data.c && !data.z)
                 {
-                transform.Rotate(-10, 0, 0);
+                    transform.Rotate(-10, 0, 0);
                 }
-                else if (Input.GetKey(KeyCode.K))
+                else if (data.stick[1] - 130 > 10 && data.c && data.z)
                 {
-                transform.Rotate(0, 0, 10);
+                    transform.Rotate(0, 0, 10);
                 }
-                else if (Input.GetKey(KeyCode.M))
+                else if (data.stick[1] - 130 < -10 && data.c && data.z)
                 {
-                transform.Rotate(0, 0, -10);
+                    transform.Rotate(0, 0, -10);
                 }
 
-
+            }
 
         }
     }

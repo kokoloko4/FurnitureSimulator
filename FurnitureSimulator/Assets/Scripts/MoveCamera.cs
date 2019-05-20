@@ -20,15 +20,126 @@ public class MoveCamera : MonoBehaviour
     float camSens = 0.25f; //How sensitive it with mouse
     private Vector3 lastMouse = new Vector3(255, 255, 255); //kind of in the middle of the screen, rather than at the top (play)
     private float totalRun = 1.0f;
-    private Wiimote controlWii;
+    public Wiimote controlWii = null;
+    private bool activated = false;
+    Vector3 wmpOffset;
+
+
+    void Start()
+    {
+        WiimoteManager.FindWiimotes();
+        controlWii = WiimoteManager.Wiimotes[0];
+
+
+    }
 
     void Update()
     {
-        lastMouse = Input.mousePosition - lastMouse;
-        lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
-        lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
-        transform.eulerAngles = lastMouse;
-        lastMouse = Input.mousePosition;
+
+   
+        if(controlWii== null)
+        {
+           /* WiimoteManager.FindWiimotes();
+
+            controlWii = WiimoteManager.Wiimotes[0];
+            */
+        }
+
+
+        int ret;
+        do
+        {
+            ret = controlWii.ReadWiimoteData();
+
+            if (ret > 0 && controlWii.current_ext == ExtensionController.MOTIONPLUS)
+            {
+
+                MotionPlusData datamp = controlWii.MotionPlus;
+
+                float vPitch = datamp.PitchSpeed;
+                float vYaw = datamp.YawSpeed;
+
+                //if(vPitch<-10 || vPitch >10)
+
+
+                Vector3 offset = new Vector3(vPitch,
+                                               -vYaw,
+                                                0f) / 95f; // Divide by 95Hz (average updates per second from wiimote)
+
+                if(offset.y > -0.2f && offset.y < 0f)
+                {
+
+                    offset.y = 0f;
+                }
+                
+
+                //datamp.SetZeroValues();
+                //float dPitch = datamp.PitchSpeed;
+                //float pitch = dPitch;
+                // wmpOffset += offset;
+               // Quaternion tRotation = Quaternion.Euler(wmpOffset);
+                float internaltr = 80f;
+                //transform.rotation = Quaternion.FromToRotation(transform.rotation * GetAccelVector(), Vector3.up)* transform.rotation;
+                //transform.rotation = Quaternion.FromToRotation(transform.forward, Vector3.forward) * transform.rotation;
+                  //  Quaternion.FromToRotation(model.rot.forward, Vector3.forward) * model.rot.rotation;
+                // Quaternion.FromToRotation(model.rot.rotation * GetAccelVector(), Vector3.up) * model.rot.rotation;
+
+             //  Debug.Log(offset);
+                
+
+               //transform.Rotate(offset, Space.Self);
+                transform.Rotate(offset);
+                //transform.Rotate(0,0,0)
+            }
+        } while (ret > 0);
+         //Debug.Log(controlWii.current_ext);
+
+        controlWii.SetupIRCamera(IRDataType.BASIC);
+
+        if (controlWii.Button.a)
+        {
+
+
+            if (controlWii.current_ext == ExtensionController.MOTIONPLUS)
+            {
+                controlWii.DeactivateWiiMotionPlus();
+                //WiimoteManager.Cleanup(controlWii);
+                controlWii = null;
+               WiimoteManager.FindWiimotes();
+                controlWii = WiimoteManager.Wiimotes[0];
+                Debug.Log("MP Fuera");
+            }else
+            {
+                controlWii.ActivateWiiMotionPlus();
+                Debug.Log("MP On");
+            }
+              
+
+
+        }
+
+        if (controlWii.Button.b)
+        {
+
+            //transform.rotation = Quaternion.FromToRotation(transform.rotation * GetAccelVector(), Vector3.down)* transform.rotation;
+            //transform.rotation = Quaternion.FromToRotation(transform.forward, Vector3.forward) * transform.rotation;
+            // Debug.Log(Vector3.down);
+            Vector3 acc = GetAccelVector();
+            acc.z = 0;
+            //acc.y = 0;
+            transform.Rotate(new Vector3(-acc.x,0,0)*5);
+            transform.Rotate(new Vector3(0, acc.y, 0) * 5);
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        }
+
+
+
+
+        /*  lastMouse = Input.mousePosition - lastMouse;
+          lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
+          lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
+          transform.eulerAngles = lastMouse;
+          lastMouse = Input.mousePosition;*/
         //Mouse  camera angle done.  
 
         //Keyboard commands
@@ -66,22 +177,48 @@ public class MoveCamera : MonoBehaviour
     private Vector3 GetBaseInput()
     { //returns the basic values, if it's 0 than it's not active.
         Vector3 p_Velocity = new Vector3();
-        if (Input.GetKey(KeyCode.W))
+
+        if (controlWii.current_ext == ExtensionController.NUNCHUCK)
         {
-            p_Velocity += new Vector3(0, 0, 1);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            p_Velocity += new Vector3(0, 0, -1);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            p_Velocity += new Vector3(-1, 0, 0);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            p_Velocity += new Vector3(1, 0, 0);
+
+            NunchuckData data = controlWii.Nunchuck;
+
+            
+
+            //Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
+            if (data.stick[1]-130>10 && !data.c && !data.z)
+            {
+                p_Velocity += new Vector3(0, 0, 1);
+            }
+            if (data.stick[1]-130<-10 && !data.c && !data.z)
+            {
+                p_Velocity += new Vector3(0, 0, -1);
+            }
+            if (data.stick[0]-140<-10 && !data.c && !data.z)
+            {
+                p_Velocity += new Vector3(-1, 0, 0);
+            }
+            if (data.stick[0]-140> 10 && !data.c && !data.z)
+            {
+                p_Velocity += new Vector3(1, 0, 0);
+            }
         }
         return p_Velocity;
     }
+
+    private Vector3 GetAccelVector()
+    {
+        float accel_x;
+        float accel_y;
+        float accel_z;
+
+        float[] accel = controlWii.Accel.GetCalibratedAccelData();
+        accel_x = accel[0];
+        accel_y = -accel[2];
+        accel_z = -accel[1];
+        Debug.Log(accel[0] + " , " + accel[1] + " , " + accel[2]);
+
+        return new Vector3(accel_x, accel_y, accel_z).normalized;
+    }
+
 }

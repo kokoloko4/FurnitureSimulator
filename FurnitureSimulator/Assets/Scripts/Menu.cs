@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using WiimoteApi;
+
 
 public class Menu : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class Menu : MonoBehaviour
     private GameObject menu;
     private GameObject[] opts;
     private bool created = false;
+
     //Time
     //private float nextActionTime = 0.0f;
     public float period = 0.1f;
@@ -38,17 +41,23 @@ public class Menu : MonoBehaviour
     //Gloves
     public GameObject RightHand;
     public GameObject LeftHand;
+    public Wiimote controlWii;
+
     // Start is called before the first frame update
     void Start()
     {
         menu = GameObject.FindGameObjectWithTag("menu");
         menu.transform.localPosition = new Vector3(0,0,2.5f);
         bufferTracker = new Queue<Vector3>();
+
+   
     }
 
     // Update is called once per frame
     void Update()
     {
+   
+
         MainMenu();
         InputControl();
     }
@@ -60,6 +69,10 @@ public class Menu : MonoBehaviour
             menu.transform.parent.GetComponent<MoveCamera>().enabled = false;
             CreateMenu();
             created = true;
+            WiimoteManager.FindWiimotes();
+            controlWii = WiimoteManager.Wiimotes[0];
+            //controlWii = transform.parent.GetComponent<MoveCamera>().controlWii;
+            controlWii.SetupIRCamera(IRDataType.BASIC);
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && created == true)
         {
@@ -67,7 +80,8 @@ public class Menu : MonoBehaviour
             Destroy(GameObject.FindGameObjectWithTag("selection"));
             menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
             created = false;
-        }
+            controlWii = null;
+                                }
         if(created == true)
         {
             int i = 0;
@@ -175,27 +189,54 @@ public class Menu : MonoBehaviour
     void InputControl()
     {
 
-        if (Input.GetKeyDown(KeyCode.D))
+
+
+        if ( controlWii != null)
         {
-            RightOption(ref activeOpt);
+            int ret;
+            do
+            {
+                ret = controlWii.ReadWiimoteData();
+
+                if (ret > 0 && controlWii.current_ext == ExtensionController.MOTIONPLUS)
+                {
+                    Vector3 offset = new Vector3(-controlWii.MotionPlus.PitchSpeed,
+                                                    controlWii.MotionPlus.YawSpeed,
+                                                    controlWii.MotionPlus.RollSpeed) / 95f; // Divide by 95Hz (average updates per second from wiimote)
+                                                                                            //wmpOffset += offset;
+
+                    //model.rot.Rotate(offset, Space.Self);
+                }
+            } while (ret > 0);
+
+            NunchuckData data = controlWii.Nunchuck;
+            //Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
+
+              if (data.stick[0] - 140 < -10 && !data.c && !data.z)
+              {
+                  LeftOption(ref activeOpt);
+              }
+              if (data.stick[0] - 140 > 10 && !data.c && !data.z)
+              {
+                  RightOption(ref activeOpt);
+              }
+              if (data.c)
+              {
+                  SelectFurniture();
+              }
+
         }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            LeftOption(ref activeOpt);
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        { 
-            SelectFurniture();
-        }
+
     }
 
     void SelectFurniture()
     {
+        NunchuckData data = controlWii.Nunchuck;
         int nameFurniture;
         if(menu.transform.childCount > 0)
         {
             int.TryParse(GameObject.FindGameObjectWithTag("active").name, out nameFurniture);
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (data.c)
             {
                 GameObject furniture = null;
                 switch (nameFurniture)
@@ -226,6 +267,7 @@ public class Menu : MonoBehaviour
                 menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
                 Destroy(GameObject.FindGameObjectWithTag("selection"));
                 DestroyMenu();
+                controlWii = null;
             }
         }
     }

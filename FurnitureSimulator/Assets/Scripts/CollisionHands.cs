@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WiimoteApi;
 
 public class CollisionHands : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class CollisionHands : MonoBehaviour
     private Gloves5DT Gloves;
     private int OpenFingersRight;
     private int OpenFingersLeft;
+    public Wiimote controlWii = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +32,7 @@ public class CollisionHands : MonoBehaviour
         OpenFingersRight = Gloves.OpenFingers(Gloves.InfoRight);
         OpenFingersLeft = Gloves.OpenFingers(Gloves.InfoLeft);
         ThrowFurniture();
+      
     }
 
     private void OnCollisionStay(Collision collision)
@@ -44,10 +48,16 @@ public class CollisionHands : MonoBehaviour
         }
         if ( RightHand != null && LeftHand != null && OpenFingersRight <= 2 && OpenFingersLeft <= 2)
         {
+            
             transform.SetParent(RightHand.transform.parent.transform);
             GetComponent<Rigidbody>().useGravity = false;
             GetComponent<Rigidbody>().isKinematic = true;
             isGrabbed = true;
+            Debug.Log(isGrabbed);
+            WiimoteManager.FindWiimotes();
+            controlWii = WiimoteManager.Wiimotes[0];
+            //controlWii = transform.parent.GetComponent<MoveCamera>().controlWii;
+            controlWii.SetupIRCamera(IRDataType.BASIC);
         }
     }
 
@@ -61,6 +71,7 @@ public class CollisionHands : MonoBehaviour
             RightHand = null;
             LeftHand = null;
             isGrabbed = false;
+            controlWii = null;
         }
     }
 }
