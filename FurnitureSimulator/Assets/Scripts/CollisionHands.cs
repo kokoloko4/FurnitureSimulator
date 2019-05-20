@@ -23,12 +23,6 @@ public class CollisionHands : MonoBehaviour
     void Update()
     {
         Gloves.GetFingersData("Glove14Left@10.3.136.131", "Glove14Right@10.3.136.131");
-        //Gloves.TestInfo();
-        /*Debug.Log("OpenR: "+Gloves.OpenFingers(Gloves.InfoRight));
-        Debug.Log("CloseR: " + Gloves.CloseFingers(Gloves.InfoRight));
-        Debug.Log("OpenL: "+Gloves.OpenFingers(Gloves.InfoLeft));
-        Debug.Log("CloseL: " + Gloves.CloseFingers(Gloves.InfoLeft));*/
-        //Debug.Log("entro");
         OpenFingersRight = Gloves.OpenFingers(Gloves.InfoRight);
         OpenFingersLeft = Gloves.OpenFingers(Gloves.InfoLeft);
         ThrowFurniture();
@@ -46,7 +40,7 @@ public class CollisionHands : MonoBehaviour
         {
             LeftHand = collision.gameObject;
         }
-        if ( RightHand != null && LeftHand != null && OpenFingersRight <= 2 && OpenFingersLeft <= 2)
+        if (TouchingFurniture()  && OpenFingersRight <= 2 && OpenFingersLeft <= 2)
         {
             
             transform.SetParent(RightHand.transform.parent.transform);
@@ -59,6 +53,15 @@ public class CollisionHands : MonoBehaviour
             //controlWii = transform.parent.GetComponent<MoveCamera>().controlWii;
             controlWii.SetupIRCamera(IRDataType.BASIC);
         }
+    }
+
+    public bool TouchingFurniture()
+    {
+        if(RightHand != null && LeftHand != null)
+        {
+            return true;
+        }
+        return false;
     }
 
     private void ThrowFurniture()

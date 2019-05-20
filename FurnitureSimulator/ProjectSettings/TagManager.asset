@@ -11,6 +11,13 @@ TagManager:
   - not active
   - selection
   - testfinger
+  - chair
+  - sofa
+  - bed
+  - bookcase
+  - table
+  - vase
+  - tv
   layers:
   - Default
   - TransparentFX
