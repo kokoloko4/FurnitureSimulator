@@ -20,34 +20,33 @@ public class RotateFurniture : MonoBehaviour
 
         RightHand = GetComponent<CollisionHands>().RightHand;
         LeftHand = GetComponent<CollisionHands>().LeftHand;
-        if (RightHand != null && LeftHand != null && GetComponent<CollisionHands>().isGrabbed)
-        {
-
-       
+        //RightHand != null && LeftHand != null && GetComponent<CollisionHands>().isGrabbed
+        if (true)
+        {       
                 if (Input.GetKey(KeyCode.O))
                 {
-                    transform.Rotate(0, 10, 0);
+                    transform.Rotate(new Vector3(0, 10, 0),Space.Self);
                 }
                 else if (Input.GetKey(KeyCode.L))
                 {
-                    transform.Rotate(0, -10, 0);
-                }
+                    transform.Rotate(new Vector3(0, -10, 0), Space.Self);
+            }
                 else if (Input.GetKey(KeyCode.P))
                 {
-                transform.Rotate(10, 0, 0);
-                }
+                transform.Rotate(new Vector3(10, 0, 0), Space.Self);
+            }
                 else if (Input.GetKey(KeyCode.I))
                 {
-                transform.Rotate(-10, 0, 0);
-                }
+                transform.Rotate(new Vector3(-10, 0, 0), Space.Self);
+            }
                 else if (Input.GetKey(KeyCode.K))
                 {
-                transform.Rotate(0, 0, 10);
-                }
+                transform.Rotate(new Vector3(0, 0, 10), Space.Self);
+            }
                 else if (Input.GetKey(KeyCode.M))
                 {
-                transform.Rotate(0, 0, -10);
-                }
+                transform.Rotate(new Vector3(0, 0, -10), Space.Self);
+            }
 
 
 
