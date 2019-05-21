@@ -18,6 +18,7 @@ TagManager:
   - table
   - vase
   - tv
+  - camera1
   layers:
   - Default
   - TransparentFX
