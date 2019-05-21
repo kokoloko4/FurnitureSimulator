@@ -19,6 +19,7 @@ TagManager:
   - vase
   - tv
   - camera1
+  - vista
   layers:
   - Default
   - TransparentFX
