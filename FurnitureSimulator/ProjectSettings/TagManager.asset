@@ -18,6 +18,7 @@ TagManager:
   - table
   - vase
   - tv
+  - vista
   layers:
   - Default
   - TransparentFX
