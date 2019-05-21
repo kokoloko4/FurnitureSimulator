@@ -164,6 +164,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pared3
       objectReference: {fileID: 0}
+    - target: {fileID: 339580367306565558, guid: 9aa55456afd42e24da2336eb802c8daf,
+        type: 3}
+      propertyPath: m_TagString
+      value: left wall
+      objectReference: {fileID: 0}
     - target: {fileID: 6733792110511877240, guid: 9aa55456afd42e24da2336eb802c8daf,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -580,6 +585,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Pared5
+      objectReference: {fileID: 0}
+    - target: {fileID: 339580367306565558, guid: 9aa55456afd42e24da2336eb802c8daf,
+        type: 3}
+      propertyPath: m_TagString
+      value: left wall
       objectReference: {fileID: 0}
     - target: {fileID: 6733792110511877240, guid: 9aa55456afd42e24da2336eb802c8daf,
         type: 3}
@@ -1803,7 +1813,6 @@ Transform:
   - {fileID: 269496058}
   - {fileID: 932689155}
   - {fileID: 427624393}
-  - {fileID: 109905876}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1858,7 +1867,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1591799709}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24756c69bd9906940a556c7855e0beac, type: 3}
   m_Name: 

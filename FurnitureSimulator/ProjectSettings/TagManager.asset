@@ -20,6 +20,12 @@ TagManager:
   - tv
   - camera1
   - vista
+  - front wall
+  - back wall
+  - left wall
+  - right wall
+  - floor
+  - roof
   layers:
   - Default
   - TransparentFX
