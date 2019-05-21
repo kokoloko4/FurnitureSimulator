@@ -29,20 +29,18 @@ public class MoveCamera : MonoBehaviour
     {
         WiimoteManager.FindWiimotes();
         controlWii = WiimoteManager.Wiimotes[0];
-
-
     }
 
     void Update()
     {
 
-   
-        if(controlWii== null)
-        {
-           /* WiimoteManager.FindWiimotes();
 
-            controlWii = WiimoteManager.Wiimotes[0];
-            */
+        if (controlWii == null)
+        {
+            /* WiimoteManager.FindWiimotes();
+
+             controlWii = WiimoteManager.Wiimotes[0];
+             */
         }
 
 
@@ -66,33 +64,33 @@ public class MoveCamera : MonoBehaviour
                                                -vYaw,
                                                 0f) / 95f; // Divide by 95Hz (average updates per second from wiimote)
 
-                if(offset.y > -0.2f && offset.y < 0f)
+                if (offset.y > -0.2f && offset.y < 0f)
                 {
 
                     offset.y = 0f;
                 }
-                
+
 
                 //datamp.SetZeroValues();
                 //float dPitch = datamp.PitchSpeed;
                 //float pitch = dPitch;
                 // wmpOffset += offset;
-               // Quaternion tRotation = Quaternion.Euler(wmpOffset);
+                // Quaternion tRotation = Quaternion.Euler(wmpOffset);
                 float internaltr = 80f;
                 //transform.rotation = Quaternion.FromToRotation(transform.rotation * GetAccelVector(), Vector3.up)* transform.rotation;
                 //transform.rotation = Quaternion.FromToRotation(transform.forward, Vector3.forward) * transform.rotation;
-                  //  Quaternion.FromToRotation(model.rot.forward, Vector3.forward) * model.rot.rotation;
+                //  Quaternion.FromToRotation(model.rot.forward, Vector3.forward) * model.rot.rotation;
                 // Quaternion.FromToRotation(model.rot.rotation * GetAccelVector(), Vector3.up) * model.rot.rotation;
 
-             //  Debug.Log(offset);
-                
+                //  Debug.Log(offset);
 
-               //transform.Rotate(offset, Space.Self);
+
+                //transform.Rotate(offset, Space.Self);
                 transform.Rotate(offset);
                 //transform.Rotate(0,0,0)
             }
         } while (ret > 0);
-         //Debug.Log(controlWii.current_ext);
+        //Debug.Log(controlWii.current_ext);
 
         controlWii.SetupIRCamera(IRDataType.BASIC);
 
@@ -105,42 +103,91 @@ public class MoveCamera : MonoBehaviour
                 controlWii.DeactivateWiiMotionPlus();
                 //WiimoteManager.Cleanup(controlWii);
                 controlWii = null;
-               WiimoteManager.FindWiimotes();
+                WiimoteManager.FindWiimotes();
                 controlWii = WiimoteManager.Wiimotes[0];
                 Debug.Log("MP Fuera");
-            }else
+            }
+            else
             {
                 controlWii.ActivateWiiMotionPlus();
                 Debug.Log("MP On");
             }
-              
+
 
 
         }
+
+        //if (controlWii.Button.b)
+        //{
+
+        //transform.rotation = Quaternion.FromToRotation(transform.rotation * GetAccelVector(), Vector3.down)* transform.rotation;
+        //transform.rotation = Quaternion.FromToRotation(transform.forward, Vector3.forward) * transform.rotation;
+        // Debug.Log(Vector3.down);
+
+        //  acc.z = 0;
+        //  acc.y = 0;
+        //transform.Rotate(new Vector3(-acc.x,0,0)*5);
 
         if (controlWii.Button.b)
         {
 
-            //transform.rotation = Quaternion.FromToRotation(transform.rotation * GetAccelVector(), Vector3.down)* transform.rotation;
-            //transform.rotation = Quaternion.FromToRotation(transform.forward, Vector3.forward) * transform.rotation;
-            // Debug.Log(Vector3.down);
             Vector3 acc = GetAccelVector();
-            acc.z = 0;
-            //acc.y = 0;
-            transform.Rotate(new Vector3(-acc.x,0,0)*5);
-            transform.Rotate(new Vector3(0, acc.y, 0) * 5);
+            if (acc.y <= -0.8f)
+            {
+                transform.Rotate(new Vector3(0, 2, 0), Space.World);
+
+            }
+            else if (acc.y >= 0.3f)
+            {
+                transform.Rotate(new Vector3(0, -2, 0), Space.World);
+
+            }
+
+            int my = 2;
+            if (transform.eulerAngles.y >90 && transform.eulerAngles.y <270)
+            {
+                if (acc.z >= -0.2f)
+                {
+                    transform.Rotate(new Vector3(my, 0, 0), Space.World);
+                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+
+                }
+                else if (acc.z <= -0.8f)
+                {
+                    transform.Rotate(new Vector3(-my, 0, 0), Space.World);
+                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+
+                }
+            }
+            else
+            {
+                if (acc.z >= -0.2f)
+                {
+                    transform.Rotate(new Vector3(-my, 0, 0), Space.World);
+                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+
+                }
+                else if (acc.z <= -0.8f)
+                {
+                    transform.Rotate(new Vector3(my, 0, 0), Space.World);
+                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+
+                }
+            }
+ 
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         }
+        Debug.Log(transform.eulerAngles.y);
 
 
 
 
-        /*  lastMouse = Input.mousePosition - lastMouse;
-          lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
-          lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
-          transform.eulerAngles = lastMouse;
-          lastMouse = Input.mousePosition;*/
-        //Mouse  camera angle done.  
+        //  }
+
+
+
+
+
 
         //Keyboard commands
         Vector3 p = GetBaseInput();
@@ -183,22 +230,22 @@ public class MoveCamera : MonoBehaviour
 
             NunchuckData data = controlWii.Nunchuck;
 
-            
+
 
             //Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
-            if (data.stick[1]-130>10 && !data.c && !data.z)
+            if (data.stick[1] - 130 > 10 && !data.c && !data.z)
             {
                 p_Velocity += new Vector3(0, 0, 1);
             }
-            if (data.stick[1]-130<-10 && !data.c && !data.z)
+            if (data.stick[1] - 130 < -10 && !data.c && !data.z)
             {
                 p_Velocity += new Vector3(0, 0, -1);
             }
-            if (data.stick[0]-140<-10 && !data.c && !data.z)
+            if (data.stick[0] - 125 < -10 && !data.c && !data.z)
             {
                 p_Velocity += new Vector3(-1, 0, 0);
             }
-            if (data.stick[0]-140> 10 && !data.c && !data.z)
+            if (data.stick[0] - 125 > 10 && !data.c && !data.z)
             {
                 p_Velocity += new Vector3(1, 0, 0);
             }
@@ -216,7 +263,7 @@ public class MoveCamera : MonoBehaviour
         accel_x = accel[0];
         accel_y = -accel[2];
         accel_z = -accel[1];
-        Debug.Log(accel[0] + " , " + accel[1] + " , " + accel[2]);
+
 
         return new Vector3(accel_x, accel_y, accel_z).normalized;
     }
