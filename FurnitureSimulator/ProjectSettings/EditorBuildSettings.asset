@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Habitacion1.unity
     guid: 104e5f322c3cad941a19d492334c9c9a
+  - enabled: 1
+    path: Assets/Scenes/Habitacion2.unity
+    guid: f80c192d4f967cf42aa01d74cb2bd883
+  - enabled: 1
+    path: Assets/Scenes/Habitacion3.unity
+    guid: 02e16d193bf67534180220d3d708e169
   m_configObjects: {}
