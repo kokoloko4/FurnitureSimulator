@@ -9,30 +9,67 @@ public class MainMenu : MonoBehaviour
     public Wiimote controlWii = null;
     private bool activated = false;
     private Button actualButton;
+    private GameObject botones;
     Vector3 wmpOffset;
     //States
     private int NunAnt = 0;
     private int NunAct = 0;
+    //Opciones
+    private int cantOpts = 4;
+    private int index = 0;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        WiimoteManager.FindWiimotes();
-        controlWii = WiimoteManager.Wiimotes[0];
-        /*actualButton = GameObject.FindGameObjectWithTag("select").GetComponent<Button>();
+        //WiimoteManager.FindWiimotes();
+        //controlWii = WiimoteManager.Wiimotes[0];
+        botones = GameObject.FindGameObjectWithTag("botones");
+        actualButton = botones.transform.GetChild(index).GetComponent<Button>();
+        actualButton.tag = "select";
         actualButton.GetComponent<Image>().color = Color.gray;
-        actualButton.OnSelect(null);*/
+        actualButton.OnSelect(null);
     }
 
     // Update is called once per frame
     void Update()
     {
-        NunAnt = NunAct;
-        NunAct = GetBaseInput();
+        //NunAnt = NunAct;
+        //NunAct = GetBaseInput();
         //Debug.Log(NunchuckDirection());
+        if (Input.GetKeyDown(KeyCode.DownArrow) && index < cantOpts)
+        {
+            index++;
+            actualButton.tag = "Untagged";
+            actualButton.GetComponent<Image>().color = Color.white;
+            //===
+            if (index == 4)
+            {
+                index = cantOpts - 1;
+            }
+            actualButton = botones.transform.GetChild(index).GetComponent<Button>();
+            actualButton.tag = "select";
+            actualButton.GetComponent<Image>().color = Color.gray;
+            actualButton.OnSelect(null);
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow) && index >= 0)
+        {
+            index--;
+            actualButton.tag = "Untagged";
+            actualButton.GetComponent<Image>().color = Color.white;
+            //===
+            if (index == -1)
+            {
+                index = 0;
+            }
+            actualButton = botones.transform.GetChild(index).GetComponent<Button>();
+            actualButton.tag = "select";
+            actualButton.GetComponent<Image>().color = Color.gray;
+            actualButton.OnSelect(null);
+        }
     }
 
-    private int GetBaseInput()
+    /*private int GetBaseInput()
     { //returns the basic values, if it's 0 than it's not active.
         int mov = 0;
 
@@ -60,5 +97,5 @@ public class MainMenu : MonoBehaviour
         if (NunAct == -1 && NunAnt == 0)
             return -1;
         return 0;
-    }
+    }*/
 }
