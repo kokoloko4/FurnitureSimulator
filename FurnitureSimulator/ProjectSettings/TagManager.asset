@@ -27,6 +27,7 @@ TagManager:
   - floor
   - roof
   - select
+  - botones
   layers:
   - Default
   - TransparentFX
