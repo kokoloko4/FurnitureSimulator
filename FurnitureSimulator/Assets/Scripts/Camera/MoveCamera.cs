@@ -33,7 +33,7 @@ public class MoveCamera : MonoBehaviour
 
     void Update()
     {
-
+        
 
         if (controlWii == null)
         {
@@ -49,46 +49,7 @@ public class MoveCamera : MonoBehaviour
         {
             ret = controlWii.ReadWiimoteData();
 
-            if (ret > 0 && controlWii.current_ext == ExtensionController.MOTIONPLUS)
-            {
 
-                MotionPlusData datamp = controlWii.MotionPlus;
-
-                float vPitch = datamp.PitchSpeed;
-                float vYaw = datamp.YawSpeed;
-
-                //if(vPitch<-10 || vPitch >10)
-
-
-                Vector3 offset = new Vector3(vPitch,
-                                               -vYaw,
-                                                0f) / 95f; // Divide by 95Hz (average updates per second from wiimote)
-
-                if (offset.y > -0.2f && offset.y < 0f)
-                {
-
-                    offset.y = 0f;
-                }
-
-
-                //datamp.SetZeroValues();
-                //float dPitch = datamp.PitchSpeed;
-                //float pitch = dPitch;
-                // wmpOffset += offset;
-                // Quaternion tRotation = Quaternion.Euler(wmpOffset);
-                float internaltr = 80f;
-                //transform.rotation = Quaternion.FromToRotation(transform.rotation * GetAccelVector(), Vector3.up)* transform.rotation;
-                //transform.rotation = Quaternion.FromToRotation(transform.forward, Vector3.forward) * transform.rotation;
-                //  Quaternion.FromToRotation(model.rot.forward, Vector3.forward) * model.rot.rotation;
-                // Quaternion.FromToRotation(model.rot.rotation * GetAccelVector(), Vector3.up) * model.rot.rotation;
-
-                //  Debug.Log(offset);
-
-
-                //transform.Rotate(offset, Space.Self);
-                transform.Rotate(offset);
-                //transform.Rotate(0,0,0)
-            }
         } while (ret > 0);
         //Debug.Log(controlWii.current_ext);
 
@@ -128,8 +89,6 @@ public class MoveCamera : MonoBehaviour
         //  acc.y = 0;
         //transform.Rotate(new Vector3(-acc.x,0,0)*5);
 
-        if (controlWii.Button.b)
-        {
 
             Vector3 acc = GetAccelVector();
             if (acc.y <= -0.8f)
@@ -176,8 +135,7 @@ public class MoveCamera : MonoBehaviour
             }
  
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-        }
-        Debug.Log(transform.eulerAngles.y);
+   
 
 
 

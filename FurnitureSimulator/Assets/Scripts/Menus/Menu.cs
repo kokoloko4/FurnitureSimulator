@@ -17,10 +17,9 @@ public class Menu : MonoBehaviour
     private bool created = false;
 
     //Time
-    //private float nextActionTime = 0.0f;
-    public float period = 0.1f;
-    //private float nextActionTimeHalf = 0.0f;
-    public float periodHalf = 0.05f;
+    private float nextActionTime = 0.0f;
+    public float period = 1f;
+
     //Tracker
     private Vector3 posVRPN;
     private float x;
@@ -64,42 +63,70 @@ public class Menu : MonoBehaviour
 
     void MainMenu()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && created == false)
+        WiimoteManager.FindWiimotes();
+        controlWii = WiimoteManager.Wiimotes[0];
+        //controlWii = transform.parent.GetComponent<MoveCamera>().controlWii;
+        controlWii.SetupIRCamera(IRDataType.BASIC);
+        if (controlWii != null)
         {
-            menu.transform.parent.GetComponent<MoveCamera>().enabled = false;
-            CreateMenu();
-            created = true;
-            WiimoteManager.FindWiimotes();
-            controlWii = WiimoteManager.Wiimotes[0];
-            //controlWii = transform.parent.GetComponent<MoveCamera>().controlWii;
-            controlWii.SetupIRCamera(IRDataType.BASIC);
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape) && created == true)
-        {
-            DestroyMenu();
-            Destroy(GameObject.FindGameObjectWithTag("selection"));
-            menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
-            created = false;
-            controlWii = null;
-                                }
-        if(created == true)
-        {
-            int i = 0;
-            while (i < opts.Length)
+            int ret;
+            do
             {
-                if (opts[i].tag == "active")
+                ret = controlWii.ReadWiimoteData();
+
+                if (ret > 0 && controlWii.current_ext == ExtensionController.MOTIONPLUS)
                 {
-                    activeOpt = opts[i];
+                    Vector3 offset = new Vector3(-controlWii.MotionPlus.PitchSpeed,
+                                                    controlWii.MotionPlus.YawSpeed,
+                                                    controlWii.MotionPlus.RollSpeed) / 95f; // Divide by 95Hz (average updates per second from wiimote)
+                                                                                            //wmpOffset += offset;
+
+                    //model.rot.Rotate(offset, Space.Self);
                 }
-                i++;
-            }
-            /*if (Time.time > nextActionTimeHalf)
+            } while (ret > 0);
+
+            NunchuckData data = controlWii.Nunchuck;
+
+            if (data.c && data.z && created == false)
             {
-                nextActionTimeHalf += periodHalf;
-                InputDataTracker("Tracker0@10.3.136.131");
-                InputTrackerGloves();
-            }*/
-        }        
+                Time.timeScale = 1f;
+
+                menu.transform.parent.GetComponent<MoveCamera>().enabled = false;
+                CreateMenu();
+                created = true;
+            }
+            else if (data.z && !data.c && created == true)
+            {
+                Time.timeScale = 1f;
+
+                DestroyMenu();
+                Destroy(GameObject.FindGameObjectWithTag("selection"));
+                menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
+                created = false;
+                controlWii = null;
+            }
+            if (created == true)
+            {
+                Time.timeScale = 1f;
+
+                int i = 0;
+                while (i < opts.Length)
+                {
+                    if (opts[i].tag == "active")
+                    {
+                        activeOpt = opts[i];
+                    }
+                    i++;
+                }
+                /*if (Time.time > nextActionTimeHalf)
+                {
+                    nextActionTimeHalf += periodHalf;
+                    InputDataTracker("Tracker0@10.3.136.131");
+                    InputTrackerGloves();
+                }*/
+            }
+
+        }
     }
 
     void DestroyMenu()
@@ -113,6 +140,7 @@ public class Menu : MonoBehaviour
 
     void CreateMenu()
     {
+
         int anguloSep = 360 / cantOpt;
         float angCubo = 90;
         GameObject parent = menu.transform.parent.gameObject;
@@ -188,9 +216,6 @@ public class Menu : MonoBehaviour
 
     void InputControl()
     {
-
-
-
         if ( controlWii != null)
         {
             int ret;
@@ -212,18 +237,31 @@ public class Menu : MonoBehaviour
             NunchuckData data = controlWii.Nunchuck;
             //Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
 
-              if (data.stick[0] - 140 < -10 && !data.c && !data.z)
-              {
-                  LeftOption(ref activeOpt);
-              }
-              if (data.stick[0] - 140 > 10 && !data.c && !data.z)
-              {
-                  RightOption(ref activeOpt);
-              }
-              if (data.c)
-              {
-                  SelectFurniture();
-              }
+
+            nextActionTime += Time.deltaTime;
+
+
+
+            if (data.stick[0] - 125 < -90 && !data.c && !data.z && nextActionTime > period)
+                {
+                nextActionTime = nextActionTime - period;
+
+
+                LeftOption(ref activeOpt);
+                
+                }
+                if (data.stick[0] - 125 > 90 && !data.c && !data.z && nextActionTime > period)
+                {
+                nextActionTime = nextActionTime - period;
+
+                RightOption(ref activeOpt);
+                }
+                if (data.c)
+                {
+                    SelectFurniture();
+                }
+            
+
 
         }
 
@@ -236,7 +274,7 @@ public class Menu : MonoBehaviour
         if(menu.transform.childCount > 0)
         {
             int.TryParse(GameObject.FindGameObjectWithTag("active").name, out nameFurniture);
-            if (data.c)
+            if (data.c && !data.z)
             {
                 GameObject furniture = null;
                 switch (nameFurniture)
