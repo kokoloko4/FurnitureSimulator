@@ -12,14 +12,11 @@ public class CollisionHands : MonoBehaviour
     private int OpenFingersRight;
     private int OpenFingersLeft;
     public Wiimote controlWii = null;
-    public Vector3 actualScale = Vector3.zero;
 
     // Start is called before the first frame update
     void Start()
     {
         Gloves = new Gloves5DT(Application.dataPath + "/DataGloves/");
-        actualScale = transform.localScale;
-
     }
 
     // Update is called once per frame
@@ -39,17 +36,14 @@ public class CollisionHands : MonoBehaviour
         {
             RightHand = collision.gameObject;
         }
-        else if (obj.name.Equals("LeftHand"))
-        {
-            LeftHand = collision.gameObject;
-        }
-        if (TouchingFurniture()  && OpenFingersRight <= 2 && OpenFingersLeft <= 2)
+        if (TouchingFurniture()  && OpenFingersRight <= 2)
         {            
             transform.SetParent(RightHand.transform.parent.transform);
+            transform.position = new Vector3(RightHand.transform.position.x, RightHand.transform.position.y-3, RightHand.transform.position.z+3);
             GetComponent<Rigidbody>().useGravity = false;
             GetComponent<Rigidbody>().isKinematic = true;
             isGrabbed = true;
-            Debug.Log(isGrabbed);
+            //Debug.Log(isGrabbed);
             WiimoteManager.FindWiimotes();
             controlWii = WiimoteManager.Wiimotes[0];
             //controlWii = transform.parent.GetComponent<MoveCamera>().controlWii;
@@ -59,7 +53,7 @@ public class CollisionHands : MonoBehaviour
 
     public bool TouchingFurniture()
     {
-        if(RightHand != null && LeftHand != null)
+        if(RightHand != null)
         {
             return true;
         }

@@ -127,6 +127,7 @@ MonoBehaviour:
   RightHand: {fileID: 0}
   LeftHand: {fileID: 0}
   isGrabbed: 0
+  actualScale: {x: 0, y: 0, z: 0}
 --- !u!114 &-3558837781627250191
 MonoBehaviour:
   m_ObjectHideFlags: 0

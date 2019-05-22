@@ -33,17 +33,6 @@ public class MoveCamera : MonoBehaviour
 
     void Update()
     {
-        
-
-        if (controlWii == null)
-        {
-            /* WiimoteManager.FindWiimotes();
-
-             controlWii = WiimoteManager.Wiimotes[0];
-             */
-        }
-
-
         int ret;
         do
         {
@@ -54,64 +43,30 @@ public class MoveCamera : MonoBehaviour
         //Debug.Log(controlWii.current_ext);
 
         controlWii.SetupIRCamera(IRDataType.BASIC);
-
-        if (controlWii.Button.a)
+        Vector3 acc = GetAccelVector();
+        if (acc.y <= -0.85f)
         {
-
-
-            if (controlWii.current_ext == ExtensionController.MOTIONPLUS)
-            {
-                controlWii.DeactivateWiiMotionPlus();
-                //WiimoteManager.Cleanup(controlWii);
-                controlWii = null;
-                WiimoteManager.FindWiimotes();
-                controlWii = WiimoteManager.Wiimotes[0];
-                Debug.Log("MP Fuera");
-            }
-            else
-            {
-                controlWii.ActivateWiiMotionPlus();
-                Debug.Log("MP On");
-            }
-
-
+            transform.Rotate(new Vector3(0, 2, 0), Space.World);
 
         }
+        else if (acc.y >= 0.1f)
+        {
+            transform.Rotate(new Vector3(0, -2, 0), Space.World);
 
-        //if (controlWii.Button.b)
-        //{
+        }
+        else
+        {
 
-        //transform.rotation = Quaternion.FromToRotation(transform.rotation * GetAccelVector(), Vector3.down)* transform.rotation;
-        //transform.rotation = Quaternion.FromToRotation(transform.forward, Vector3.forward) * transform.rotation;
-        // Debug.Log(Vector3.down);
-
-        //  acc.z = 0;
-        //  acc.y = 0;
-        //transform.Rotate(new Vector3(-acc.x,0,0)*5);
-
-
-            Vector3 acc = GetAccelVector();
-            if (acc.y <= -0.8f)
+            /*int my = 2;
+            if (transform.eulerAngles.y > 90 && transform.eulerAngles.y < 270)
             {
-                transform.Rotate(new Vector3(0, 2, 0), Space.World);
-
-            }
-            else if (acc.y >= 0.3f)
-            {
-                transform.Rotate(new Vector3(0, -2, 0), Space.World);
-
-            }
-
-            int my = 2;
-            if (transform.eulerAngles.y >90 && transform.eulerAngles.y <270)
-            {
-                if (acc.z >= -0.2f)
+                if (acc.z >= -0.3f)
                 {
                     transform.Rotate(new Vector3(my, 0, 0), Space.World);
                     //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
                 }
-                else if (acc.z <= -0.8f)
+                else if (acc.z <= -0.9f)
                 {
                     transform.Rotate(new Vector3(-my, 0, 0), Space.World);
                     //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
@@ -120,7 +75,7 @@ public class MoveCamera : MonoBehaviour
             }
             else
             {
-                if (acc.z >= -0.2f)
+                if (acc.z >= -0.3f)
                 {
                     transform.Rotate(new Vector3(-my, 0, 0), Space.World);
                     //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
@@ -132,21 +87,9 @@ public class MoveCamera : MonoBehaviour
                     //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
                 }
-            }
- 
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-   
-
-
-
-
-        //  }
-
-
-
-
-
-
+            }*/
+        }
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         //Keyboard commands
         Vector3 p = GetBaseInput();
         if (Input.GetKey(KeyCode.LeftShift))

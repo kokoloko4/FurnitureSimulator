@@ -8,6 +8,7 @@ public class MainMenu : MonoBehaviour
 {
     public Wiimote controlWii = null;
     private bool activated = false;
+    public GameObject rooms;
     private Button actualButton;
     private GameObject botones;
     Vector3 wmpOffset;
@@ -17,6 +18,10 @@ public class MainMenu : MonoBehaviour
     //Opciones
     private int cantOpts = 4;
     private int index = 0;
+
+    //Time
+    private float nextActionTime = 0.0f;
+    public float period = 0.5f;
 
 
     // Start is called before the first frame update
@@ -29,73 +34,86 @@ public class MainMenu : MonoBehaviour
         actualButton.tag = "select";
         actualButton.GetComponent<Image>().color = Color.gray;
         actualButton.OnSelect(null);
+        WiimoteManager.FindWiimotes();
+        controlWii = WiimoteManager.Wiimotes[0];
+        Time.timeScale = 50f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //NunAnt = NunAct;
-        //NunAct = GetBaseInput();
-        //Debug.Log(NunchuckDirection());
-        if (Input.GetKeyDown(KeyCode.DownArrow) && index < cantOpts)
+        int ret;
+        do
         {
-            index++;
-            actualButton.tag = "Untagged";
-            actualButton.GetComponent<Image>().color = Color.white;
-            //===
-            if (index == 4)
-            {
-                index = cantOpts - 1;
-            }
-            actualButton = botones.transform.GetChild(index).GetComponent<Button>();
-            actualButton.tag = "select";
-            actualButton.GetComponent<Image>().color = Color.gray;
-            actualButton.OnSelect(null);
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow) && index >= 0)
-        {
-            index--;
-            actualButton.tag = "Untagged";
-            actualButton.GetComponent<Image>().color = Color.white;
-            //===
-            if (index == -1)
-            {
-                index = 0;
-            }
-            actualButton = botones.transform.GetChild(index).GetComponent<Button>();
-            actualButton.tag = "select";
-            actualButton.GetComponent<Image>().color = Color.gray;
-            actualButton.OnSelect(null);
-        }
-    }
+            ret = controlWii.ReadWiimoteData();
 
-    /*private int GetBaseInput()
-    { //returns the basic values, if it's 0 than it's not active.
-        int mov = 0;
+
+        } while (ret > 0);
+
+        controlWii.SetupIRCamera(IRDataType.BASIC);
 
         if (controlWii.current_ext == ExtensionController.NUNCHUCK)
         {
+
             NunchuckData data = controlWii.Nunchuck;
-            Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
-            if (data.stick[1] - 130 > 10 )
+            nextActionTime += Time.deltaTime;
+
+            if (nextActionTime > period)
             {
-                mov = 1;
+                Debug.Log("a");
+
+
+                if (data.stick[1] - 130 < -90 && !data.c && !data.z && index < cantOpts)
+                {
+                    index++;
+                    actualButton.tag = "Untagged";
+                    actualButton.GetComponent<Image>().color = Color.white;
+                    //===
+                    if (index == 4)
+                    {
+                        index = cantOpts - 1;
+                    }
+                    actualButton = botones.transform.GetChild(index).GetComponent<Button>();
+                    actualButton.tag = "select";
+                    actualButton.GetComponent<Image>().color = Color.gray;
+                    actualButton.OnSelect(null);
+                }
+                if (data.stick[1] - 130 > 90 && !data.c && !data.z  && index >= 0)
+                {
+                    index--;
+                    actualButton.tag = "Untagged";
+                    actualButton.GetComponent<Image>().color = Color.white;
+                    //===
+                    if (index == -1)
+                    {
+                        index = 0;
+                    }
+                    actualButton = botones.transform.GetChild(index).GetComponent<Button>();
+                    actualButton.tag = "select";
+                    actualButton.GetComponent<Image>().color = Color.gray;
+                    actualButton.OnSelect(null);
+                }
             }
-            if (data.stick[1] - 130 < -10)
+            
+            if (data.c)
             {
-                mov = -1;
+                Time.timeScale = 1f;
+                switch (index)
+                {
+                    case 0:
+                        rooms.GetComponent<RoomsMgr>().LoadRoom("Habitacion3");
+                        break;
+                    case 1:
+                        rooms.GetComponent<RoomsMgr>().LoadRoom("Habitacion2");
+                        break;
+                    case 2:
+                        rooms.GetComponent<RoomsMgr>().LoadRoom("Habitacion1");
+                        break;
+                    case 3:
+                        rooms.GetComponent<RoomsMgr>().ExitSimulator();
+                        break;
+                }
             }
         }
-        return mov;
     }
-
-    //returns 1 for up, returns -1 for down
-    private int NunchuckDirection()
-    {
-        if (NunAct == 1 && NunAnt == 0)
-            return 1;
-        if (NunAct == -1 && NunAnt == 0)
-            return -1;
-        return 0;
-    }*/
 }
