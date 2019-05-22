@@ -13,16 +13,11 @@ public class MainMenu : MonoBehaviour
     private GameObject botones;
     Vector3 wmpOffset;
     //States
-    private int NunAnt = 0;
+    private int NunDir = 0;
     private int NunAct = 0;
     //Opciones
     private int cantOpts = 4;
     private int index = 0;
-
-    //Time
-    private float nextActionTime = 0.0f;
-    public float period = 0.5f;
-
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +31,6 @@ public class MainMenu : MonoBehaviour
         actualButton.OnSelect(null);
         WiimoteManager.FindWiimotes();
         controlWii = WiimoteManager.Wiimotes[0];
-        Time.timeScale = 50f;
     }
 
     // Update is called once per frame
@@ -56,14 +50,35 @@ public class MainMenu : MonoBehaviour
         {
 
             NunchuckData data = controlWii.Nunchuck;
-            nextActionTime += Time.deltaTime;
-
-            if (nextActionTime > period)
+            if (NunDir != 0)
             {
-                Debug.Log("a");
+                if (data.stick[1] - 130 < -90 && !data.c && !data.z)
+                {
+                    NunAct = -1;
+                }
+                else if (data.stick[1] - 130 > 90 && !data.c && !data.z)
+                {
+                    NunAct = 1;
+                }
+                else
+                {
+                    NunAct = 0;
+                }
+            }
+            NunDir = 0;
 
+            if (data.stick[1] - 130 < -90 && !data.c && !data.z)
+            {
+                NunDir = -1;
+            }
+            else if (data.stick[1] - 130 > 90 && !data.c && !data.z)
+            {
+                NunDir = 1;
+            }
 
-                if (data.stick[1] - 130 < -90 && !data.c && !data.z && index < cantOpts)
+            if(NunAct == 0)
+            {
+                if (NunDir == -1 && !data.c && !data.z && index < cantOpts)
                 {
                     index++;
                     actualButton.tag = "Untagged";
@@ -78,7 +93,7 @@ public class MainMenu : MonoBehaviour
                     actualButton.GetComponent<Image>().color = Color.gray;
                     actualButton.OnSelect(null);
                 }
-                if (data.stick[1] - 130 > 90 && !data.c && !data.z  && index >= 0)
+                else if (NunDir == 1 && !data.c && !data.z && index >= 0)
                 {
                     index--;
                     actualButton.tag = "Untagged";
@@ -94,10 +109,10 @@ public class MainMenu : MonoBehaviour
                     actualButton.OnSelect(null);
                 }
             }
-            
+
+
             if (data.c)
             {
-                Time.timeScale = 1f;
                 switch (index)
                 {
                     case 0:

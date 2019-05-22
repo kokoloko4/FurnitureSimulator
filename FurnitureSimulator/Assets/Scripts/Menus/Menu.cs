@@ -15,51 +15,27 @@ public class Menu : MonoBehaviour
     private GameObject menu;
     private GameObject[] opts;
     private bool created = false;
-
-    //Time
-    private float nextActionTime = 0.0f;
-    public float period = 1f;
-
-    //Tracker
-    private Vector3 posVRPN;
-    private float x;
-    private float y;
-    private float z;
-    private Queue<Vector3> bufferTracker;
-    private int tamBuffer = 20;
-    //Z Movement
-    private float minArmDistanceZ = 1.5f;
-    private float maxArmDistanceZ = 1.9f;
-    private bool moveArmZ = false;
-    private int dirArmZ = 0;
-    //Y Movement
-    private float minArmDistanceY = 6.0f;
-    private float maxArmDistanceY = 7.0f;
-    private bool moveArmY = false;
-    private int dirArmY = 0;
-    //Gloves
+    //Hands
     public GameObject RightHand;
-    public GameObject LeftHand;
+    //Wii
     public Wiimote controlWii;
-    //Furni
+    //Furniture
     public Vector3 actualScale = Vector3.zero;
+    //States
+    private int NunDir = 0;
+    private int NunAct = 0;
 
 
     // Start is called before the first frame update
     void Start()
     {
         menu = GameObject.FindGameObjectWithTag("menu");
-        menu.transform.localPosition = new Vector3(0,0,2.5f);
-        bufferTracker = new Queue<Vector3>();
-
-   
+        menu.transform.localPosition = new Vector3(0, 0, 2.5f);
     }
 
     // Update is called once per frame
     void Update()
     {
-   
-
         MainMenu();
         InputControl();
     }
@@ -92,16 +68,12 @@ public class Menu : MonoBehaviour
 
             if (data.c && data.z && created == false)
             {
-                Time.timeScale = 1f;
-
                 menu.transform.parent.GetComponent<MoveCamera>().enabled = false;
                 CreateMenu();
                 created = true;
             }
             else if (data.z && !data.c && created == true)
             {
-                Time.timeScale = 1f;
-
                 DestroyMenu();
                 Destroy(GameObject.FindGameObjectWithTag("selection"));
                 menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
@@ -110,8 +82,6 @@ public class Menu : MonoBehaviour
             }
             if (created == true)
             {
-                Time.timeScale = 1f;
-
                 int i = 0;
                 while (i < opts.Length)
                 {
@@ -121,12 +91,6 @@ public class Menu : MonoBehaviour
                     }
                     i++;
                 }
-                /*if (Time.time > nextActionTimeHalf)
-                {
-                    nextActionTimeHalf += periodHalf;
-                    InputDataTracker("Tracker0@10.3.136.131");
-                    InputTrackerGloves();
-                }*/
             }
 
         }
@@ -155,7 +119,7 @@ public class Menu : MonoBehaviour
         selection.transform.localPosition = new Vector3(0, 1.2f, 3);
         selection.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
         selection.tag = "selection";
-        selection.transform.localEulerAngles = new Vector3(0,0,0);
+        selection.transform.localEulerAngles = new Vector3(0, 0, 0);
         selection.GetComponent<Renderer>().material = quadMaterial;
         for (int i = 0; i < cantOpt; i++)
         {
@@ -205,7 +169,7 @@ public class Menu : MonoBehaviour
                     break;
             }
             cube.transform.parent = menu.transform;
-            cube.transform.localEulerAngles = new Vector3(0,0,0);
+            cube.transform.localEulerAngles = new Vector3(0, 0, 0);
             cube.transform.localPosition = new Vector3(x, y, distZ);
             cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             angCubo += anguloSep;
@@ -219,7 +183,7 @@ public class Menu : MonoBehaviour
 
     void InputControl()
     {
-        if ( controlWii != null)
+        if (controlWii != null)
         {
             int ret;
             do
@@ -240,32 +204,47 @@ public class Menu : MonoBehaviour
             NunchuckData data = controlWii.Nunchuck;
             //Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
 
-
-            nextActionTime += Time.deltaTime;
-
-
-
-            if (data.stick[0] - 125 < -90 && !data.c && !data.z && nextActionTime > period)
+            if (NunDir != 0)
+            {
+                if (data.stick[0] - 125 < -90 && !data.c && !data.z)
                 {
-                nextActionTime = nextActionTime - period;
-
-
-                LeftOption(ref activeOpt);
-                
+                    NunAct = -1;
                 }
-                if (data.stick[0] - 125 > 90 && !data.c && !data.z && nextActionTime > period)
+                else if (data.stick[0] - 125 > 90 && !data.c && !data.z)
                 {
-                nextActionTime = nextActionTime - period;
+                    NunAct = 1;
+                }
+                else
+                {
+                    NunAct = 0;
+                }
+            }
+            NunDir = 0;
 
-                RightOption(ref activeOpt);
+            if (data.stick[0] - 125 < -90 && !data.c && !data.z)
+            {
+                NunDir = -1;
+            }
+            else if (data.stick[0] - 125 > 90 && !data.c && !data.z)
+            {
+                NunDir = 1;
+            }
+            if(NunAct == 0)
+            {
+                if (NunDir == -1 && !data.c && !data.z)
+                {
+                    LeftOption(ref activeOpt);
+
+                }
+                else if (NunDir == 1 && !data.c && !data.z)
+                {
+                    RightOption(ref activeOpt);
                 }
                 if (data.c)
                 {
                     SelectFurniture();
                 }
-            
-
-
+            }
         }
 
     }
@@ -274,7 +253,7 @@ public class Menu : MonoBehaviour
     {
         NunchuckData data = controlWii.Nunchuck;
         int nameFurniture;
-        if(menu.transform.childCount > 0)
+        if (menu.transform.childCount > 0)
         {
             int.TryParse(GameObject.FindGameObjectWithTag("active").name, out nameFurniture);
             if (data.c && !data.z)
@@ -305,7 +284,7 @@ public class Menu : MonoBehaviour
                         break;
                 }
                 actualScale = transform.localScale;
-                Instantiate(furniture, new Vector3(RightHand.transform.position.x, RightHand.transform.position.y - 0.5f, RightHand.transform.position.z +0.5f), transform.rotation * Quaternion.Euler(270f, 0f, 0f));
+                Instantiate(furniture, new Vector3(RightHand.transform.position.x, RightHand.transform.position.y - 0.5f, RightHand.transform.position.z + 0.5f), transform.rotation * Quaternion.Euler(270f, 0f, 0f));
                 menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
                 Destroy(GameObject.FindGameObjectWithTag("selection"));
                 DestroyMenu();
@@ -354,109 +333,5 @@ public class Menu : MonoBehaviour
         }
         opts[cantOpt - 1].transform.position = new Vector3(x, y, z);
         activeOpt.tag = "not active";
-    }
-
-    void InputDataTracker(string address)
-    {
-        posVRPN = VRPN.vrpnTrackerPos(address, 1);
-
-        x = -posVRPN.y * 10 / 0.5f;
-        y = posVRPN.z * 10 / 0.5f;
-        z = -posVRPN.x * 10;
-        Vector3 qVector = new Vector3(x, y, z);
-        bufferTracker.Enqueue(qVector);
-        if (bufferTracker.Count > tamBuffer)
-        {
-            bufferTracker.Dequeue();
-        }
-    }
-
-    void InputTrackerGloves()
-    {
-        Debug.Log("tbuffer" + bufferTracker.ElementAt(tamBuffer - 1));
-
-        ZMovement();
-        YMovement();
-
-    }
-
-    void ZMovement()
-    {
-        dirArmZ = 0;
-        moveArmZ = false;
-        int i = 1;
-        if (bufferTracker.Count >= 20)
-        {
-            while (!moveArmZ && i < tamBuffer - 1)
-            {
-                float dif = Mathf.Abs(bufferTracker.ElementAt(tamBuffer - 1).z - bufferTracker.ElementAt(tamBuffer - i - 1).z);
-                if (dif >= minArmDistanceZ && dif <= maxArmDistanceZ)
-                {
-                    moveArmZ = true;
-                    if (bufferTracker.ElementAt(tamBuffer - 1).z > bufferTracker.ElementAt(tamBuffer - i - 1).z)
-                    {
-                        dirArmZ = -1;
-                    }
-                    else
-                    {
-                        dirArmZ = 1;
-                    }
-                }
-                i++;
-            }
-            //Move menu
-            if (moveArmZ)
-            {
-                //Right move
-                if (dirArmZ == 1)
-                {
-                    RightOption(ref activeOpt);
-                }
-                //Left move
-                else if (dirArmZ == -1)
-                {
-                    LeftOption(ref activeOpt);
-                }
-                bufferTracker.Clear();
-            }
-            //Debug.Log("¿hay movimiento? "+move);
-        }
-    }
-
-    void YMovement()
-    {
-        dirArmY = 0;
-        moveArmY = false;
-        int i = 1;
-        if (bufferTracker.Count >= 20)
-        {
-            while (!moveArmY && i < tamBuffer - 1)
-            {
-                float dif = Mathf.Abs(bufferTracker.ElementAt(tamBuffer - 1).y - bufferTracker.ElementAt(tamBuffer - i - 1).y);
-                if (dif >= minArmDistanceY && dif <= maxArmDistanceY)
-                {
-                    moveArmY = true;
-                    if (bufferTracker.ElementAt(tamBuffer - 1).y > bufferTracker.ElementAt(tamBuffer - i - 1).y)
-                    {
-                        dirArmY = 1;
-                    }
-                    else
-                    {
-                        dirArmY = -1;
-                    }
-                }
-                i++;
-            }
-            //Enter option
-            if (moveArmY)
-            {
-                if (dirArmY == 1)
-                {
-                    SelectFurniture();
-                }
-                bufferTracker.Clear();
-            }
-            //Debug.Log("¿hay movimiento? "+ moveArmY);
-        }
     }
 }
