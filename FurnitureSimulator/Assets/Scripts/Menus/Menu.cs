@@ -233,12 +233,11 @@ public class Menu : MonoBehaviour
             {
                 if (NunDir == -1 && !data.c && !data.z)
                 {
-                    LeftOption(ref activeOpt);
-
+                    RightOption(ref activeOpt);
                 }
                 else if (NunDir == 1 && !data.c && !data.z)
                 {
-                    RightOption(ref activeOpt);
+                    LeftOption(ref activeOpt);
                 }
                 if (data.c)
                 {
@@ -283,8 +282,9 @@ public class Menu : MonoBehaviour
                         furniture = Resources.Load<GameObject>("BookCase_1") as GameObject;
                         break;
                 }
-                actualScale = transform.localScale;
-                Instantiate(furniture, new Vector3(RightHand.transform.position.x, RightHand.transform.position.y - 0.5f, RightHand.transform.position.z + 0.5f), transform.rotation * Quaternion.Euler(270f, 0f, 0f));
+                GameObject vista = GameObject.FindGameObjectWithTag("vista");
+                Instantiate(furniture, new Vector3(vista.transform.position.x, vista.transform.position.y - 0.5f, vista.transform.position.z + 0.5f), transform.rotation * Quaternion.Euler(270f, 0f, 0f));
+                actualScale = furniture.transform.localScale;
                 menu.transform.parent.GetComponent<MoveCamera>().enabled = true;
                 Destroy(GameObject.FindGameObjectWithTag("selection"));
                 DestroyMenu();

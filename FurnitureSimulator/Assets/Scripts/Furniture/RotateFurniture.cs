@@ -8,21 +8,23 @@ public class RotateFurniture : MonoBehaviour
 {
 
     private CollisionHands collision;
-    private Menu scale;
+    private CollisionHands scale;
     public Wiimote controlWii = null;
-
+    public bool rotarZ = false;
+    public GameObject camera;
     // Start is called before the first frame update
     void Start()
     {
         collision = GetComponent<CollisionHands>();
-        scale = GetComponent<Menu>();
+        scale = GetComponent<CollisionHands>();
+        camera = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
     // Update is called once per frame
     void Update()
     {
         controlWii = GetComponent<CollisionHands>().controlWii;
-        if ((collision.TouchingFurniture() && collision.isGrabbed && controlWii != null) || true)
+        if (collision.TouchingFurniture() && collision.isGrabbed && controlWii != null)
         {
             int ret;
             do
@@ -40,41 +42,58 @@ public class RotateFurniture : MonoBehaviour
                 }
             } while (ret > 0);
             NunchuckData data = controlWii.Nunchuck;
-            Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
-            transform.parent = GameObject.FindGameObjectWithTag("vista").transform;
-            transform.position = new Vector3(transform.parent.position.x, transform.parent.position.y, transform.parent.position.z);
-            transform.localScale = scale.actualScale / 3;
-            if (data.stick[0] - 140 > 10 && data.c && !data.z)
+            if(data.c && !data.z)
             {
-                transform.Rotate(0, 10, 0);
-            }
-            else if (data.stick[0] - 140 < -10 && data.c && !data.z)
-            {
-                transform.Rotate(0, -10, 0);
-
-            }
-            else if (data.stick[1] - 130 > 10 && data.c && !data.z)
-            {
-                transform.Rotate(10, 0, 0);
-            }
-            else if (data.stick[1] - 130 < -10 && data.c && !data.z)
-            {
-                transform.Rotate(-10, 0, 0);
-            }
-            else if (data.stick[1] - 130 > 10 && data.c && data.z)
-            {
-                transform.Rotate(0, 0, 10);
-            }
-            else if (data.stick[1] - 130 < -10 && data.c && data.z)
-            {
-                transform.Rotate(0, 0, -10);
-            }
-            else
-            {
-                transform.parent = collision.RightHand.gameObject.transform;
+                transform.parent = GameObject.FindGameObjectWithTag("vista").transform;
+                Vector3 acc = GetAccelVector();
                 transform.position = new Vector3(transform.parent.position.x, transform.parent.position.y, transform.parent.position.z);
-                transform.localScale = scale.actualScale;
-            }
+                transform.localScale = scale.actualScale / 3;
+                if (acc.y >= -0.2f)
+                {
+                    transform.Rotate(new Vector3(0, 0, 10));
+                }
+                else if (acc.y <= -0.7f)
+                {
+                    transform.Rotate(new Vector3(0, 0, -10));
+                }
+                else if (data.stick[0] - 125 > 10)
+                {
+                    transform.Rotate(0, 10, 0);
+                }
+                else if (data.stick[0] - 125 < -10)
+                {
+                    transform.Rotate(0, -10, 0);
+
+                }
+                else if (data.stick[1] - 130 > 10)
+                {
+                    transform.Rotate(10, 0, 0);
+                }
+                else if (data.stick[1] - 130 < -10)
+                {
+                    transform.Rotate(-10, 0, 0);
+                }
+                else
+                {
+                    transform.localScale = scale.actualScale;
+                }
+            }            
         }
+    }
+
+
+    private Vector3 GetAccelVector()
+    {
+        float accel_x;
+        float accel_y;
+        float accel_z;
+
+        float[] accel = controlWii.Accel.GetCalibratedAccelData();
+        accel_x = accel[0];
+        accel_y = -accel[2];
+        accel_z = -accel[1];
+
+
+        return new Vector3(accel_x, accel_y, accel_z).normalized;
     }
 }

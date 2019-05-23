@@ -21,7 +21,7 @@ public class MoveCamera : MonoBehaviour
     private Vector3 lastMouse = new Vector3(255, 255, 255); //kind of in the middle of the screen, rather than at the top (play)
     private float totalRun = 1.0f;
     public Wiimote controlWii = null;
-    private bool activated = false;
+    public bool activated = true;
     Vector3 wmpOffset;
 
 
@@ -43,52 +43,6 @@ public class MoveCamera : MonoBehaviour
         //Debug.Log(controlWii.current_ext);
 
         controlWii.SetupIRCamera(IRDataType.BASIC);
-        Vector3 acc = GetAccelVector();
-        if (acc.y <= -0.85f)
-        {
-            transform.Rotate(new Vector3(0, 2, 0), Space.World);
-
-        }
-        else if (acc.y >= 0.1f)
-        {
-            transform.Rotate(new Vector3(0, -2, 0), Space.World);
-
-        }
-        else
-        {
-
-            /*int my = 2;
-            if (transform.eulerAngles.y > 90 && transform.eulerAngles.y < 270)
-            {
-                if (acc.z >= -0.3f)
-                {
-                    transform.Rotate(new Vector3(my, 0, 0), Space.World);
-                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-
-                }
-                else if (acc.z <= -0.9f)
-                {
-                    transform.Rotate(new Vector3(-my, 0, 0), Space.World);
-                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-
-                }
-            }
-            else
-            {
-                if (acc.z >= -0.3f)
-                {
-                    transform.Rotate(new Vector3(-my, 0, 0), Space.World);
-                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-
-                }
-                else if (acc.z <= -0.8f)
-                {
-                    transform.Rotate(new Vector3(my, 0, 0), Space.World);
-                    //transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-
-                }
-            }*/
-        }
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
         //Keyboard commands
         Vector3 p = GetBaseInput();
@@ -119,7 +73,6 @@ public class MoveCamera : MonoBehaviour
         {
             transform.Translate(p);
         }
-
     }
 
     private Vector3 GetBaseInput()
@@ -128,12 +81,50 @@ public class MoveCamera : MonoBehaviour
 
         if (controlWii.current_ext == ExtensionController.NUNCHUCK)
         {
-
             NunchuckData data = controlWii.Nunchuck;
+            Vector3 acc = GetAccelVector();
+            if (acc.y <= -0.85f && !data.c && !data.z)
+            {
+                transform.Rotate(new Vector3(0, 2, 0), Space.World);
 
+            }
+            else if (acc.y >= 0.1f && !data.c && !data.z)
+            {
+                transform.Rotate(new Vector3(0, -2, 0), Space.World);
+            }
+            int my = 2;
+            if (transform.eulerAngles.y > 90 && transform.eulerAngles.y < 270)
+            {
+                if (acc.z >= -0.3f)
+                {
+                    transform.eulerAngles = new Vector3(45, transform.eulerAngles.y, 0);
+                }
+                else if (acc.z <= -0.9875f)
+                {
+                    transform.eulerAngles = new Vector3(315, transform.eulerAngles.y, 0);
+                }
+                else
+                {
+                    transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+                }
 
+            }
+            else
+            {
+                if (acc.z >= -0.3f)
+                {
+                    transform.eulerAngles = new Vector3(45, transform.eulerAngles.y, 0);
+                }
+                else if (acc.z <= -0.9875f)
+                {
+                    transform.eulerAngles = new Vector3(315, transform.eulerAngles.y, 0);
+                }
+                else
+                {
+                    transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+                }
 
-            //Debug.Log("Stick: " + data.stick[0] + ", " + data.stick[1]);
+            }
             if (data.stick[1] - 130 > 10 && !data.c && !data.z)
             {
                 p_Velocity += new Vector3(0, 0, 1);
