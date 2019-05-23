@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using WiimoteApi;
 
 public class MoveCamera : MonoBehaviour
@@ -33,6 +34,8 @@ public class MoveCamera : MonoBehaviour
 
     void Update()
     {
+
+        transform.position= new Vector3(transform.position.x, 2f, transform.position.z);
         int ret;
         do
         {
@@ -73,6 +76,10 @@ public class MoveCamera : MonoBehaviour
         {
             transform.Translate(p);
         }
+        if (controlWii.Button.b)
+        {
+            SceneManager.LoadScene("MenuPrincipal");
+        }
     }
 
     private Vector3 GetBaseInput()
@@ -99,10 +106,10 @@ public class MoveCamera : MonoBehaviour
                 {
                     transform.eulerAngles = new Vector3(45, transform.eulerAngles.y, 0);
                 }
-                else if (acc.z <= -0.9875f)
+                /*else if (acc.z <= -0.9875f)
                 {
                     transform.eulerAngles = new Vector3(315, transform.eulerAngles.y, 0);
-                }
+                }*/
                 else
                 {
                     transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
@@ -115,10 +122,10 @@ public class MoveCamera : MonoBehaviour
                 {
                     transform.eulerAngles = new Vector3(45, transform.eulerAngles.y, 0);
                 }
-                else if (acc.z <= -0.9875f)
+                /*else if (acc.z <= -0.9875f)
                 {
                     transform.eulerAngles = new Vector3(315, transform.eulerAngles.y, 0);
-                }
+                }*/
                 else
                 {
                     transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
