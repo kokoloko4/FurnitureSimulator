@@ -14,6 +14,7 @@ public class CollisionHands : MonoBehaviour
     public Wiimote controlWii = null;
     public GameObject vista;
     public Vector3 actualScale;
+    private string nameFurni;
 
     // Start is called before the first frame update
     void Start()
@@ -48,8 +49,12 @@ public class CollisionHands : MonoBehaviour
             isGrabbed = true;
             WiimoteManager.FindWiimotes();
             controlWii = WiimoteManager.Wiimotes[0];
-            actualScale = transform.localScale; 
             controlWii.SetupIRCamera(IRDataType.BASIC);
+            if (!transform.name.Equals(nameFurni))
+            {
+                nameFurni = transform.name;
+                actualScale = transform.localScale;
+            }
         }
     }
 
