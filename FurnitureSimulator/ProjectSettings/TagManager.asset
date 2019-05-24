@@ -3,7 +3,31 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - lefthand
+  - righthand
+  - menu
+  - active
+  - not active
+  - selection
+  - testfinger
+  - chair
+  - sofa
+  - bed
+  - bookcase
+  - table
+  - vase
+  - tv
+  - camera1
+  - vista
+  - front wall
+  - back wall
+  - left wall
+  - right wall
+  - floor
+  - roof
+  - select
+  - botones
   layers:
   - Default
   - TransparentFX
